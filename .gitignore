@@ -1,0 +1,8 @@
+# Archivos Python
+__pycache__/
+# ===== Archivos Environment =====
+.env
+.venv/
+
+# ===== Achivos secretos =====
+*.key
