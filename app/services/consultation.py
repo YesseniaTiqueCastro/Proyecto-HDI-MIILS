@@ -4,7 +4,6 @@ from app.config.settings import HDI_BASE_URL, CONSULTA_INSPECCION_ENDPOINT
 from datetime import datetime
 import uuid
 
-
 def consultar_inspeccion(id_inspeccion=None, placa=None):
     token = obtener_token()
 
@@ -17,25 +16,27 @@ def consultar_inspeccion(id_inspeccion=None, placa=None):
         raise ValueError("Debe enviar id_inspeccion o placa")
 
     body = {
-        "infoRequest": {
-            "requestID": str(uuid.uuid4()),
-            "fecha": datetime.utcnow().isoformat() + "Z",
-            "aplicacionCliente": "12",
-            "terminal": "D&D",
-            "ip": "1.1.1.1"
-        },
-        "solicitud": {
-            "operacion": "CONSULTAR",
-            "lineaNegocio": "AUTOS",
-            "inspeccion": {}
+        "crearInspMIILSRq": {
+            "infoRequest": {
+                "requestID": str(uuid.uuid4()),
+                "fecha": datetime.utcnow().isoformat() + "Z",
+                "aplicacionCliente": "WS_COLSERAUTO",
+                "terminal": "WS_COLSERAUTO",
+                "ip": "1.1.1.1"
+            },
+            "solicitud": {
+                "operacion": "CONSULTAR",
+                "lineaNegocio": "AUTOS",
+                "inspeccion": {}
+            }
         }
     }
 
     if id_inspeccion:
-        body["solicitud"]["inspeccion"]["idInspeccion"] = str(id_inspeccion)
+        body["crearInspMIILSRq"]["solicitud"]["inspeccion"]["idInspeccion"] = str(id_inspeccion)
 
     if placa:
-        body["solicitud"]["inspeccion"]["placa"] = placa
+        body["crearInspMIILSRq"]["solicitud"]["inspeccion"]["placa"] = placa
 
     response = HDIClient.post(
         url=f"{HDI_BASE_URL}{CONSULTA_INSPECCION_ENDPOINT}",
@@ -49,7 +50,7 @@ def consultar_inspeccion(id_inspeccion=None, placa=None):
         "status": response.status_code,
         "inspeccion": None,
         "vehiculo": None,
-        "siniestros": None,
+        "siniestros": [],
         "raw_response": response_json
     }
 
@@ -59,11 +60,24 @@ def consultar_inspeccion(id_inspeccion=None, placa=None):
         inspeccion = solicitud.get("inspeccion", {})
         datos_auto = inspeccion.get("datosInspeccionAuto", {})
         vehiculo = datos_auto.get("vehiculo", {})
-        siniestros = vehiculo.get("consultaSiniestros", {})
+
+      
+        consulta_siniestros = vehiculo.get("consultaSiniestros", {})
+        siniestros_raw = consulta_siniestros.get("siniestros")
+
+        if siniestros_raw in [None, "null", "None"]:
+            siniestros_normalizados = []
+        elif isinstance(siniestros_raw, list):
+            siniestros_normalizados = siniestros_raw
+        elif isinstance(siniestros_raw, dict):
+            siniestros_normalizados = [siniestros_raw]
+        else:
+            siniestros_normalizados = []
+
 
         resultado["inspeccion"] = inspeccion
         resultado["vehiculo"] = vehiculo
-        resultado["siniestros"] = siniestros
+        resultado["siniestros"] = siniestros_normalizados
 
     except Exception as e:
         resultado["error"] = str(e)

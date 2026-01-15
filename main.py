@@ -9,15 +9,17 @@ if __name__ == "__main__":
     print("Consumo HDI")
 
     ID_INSPECCION = "12274"
-    USUARIO = "PROVEEDOR_DD"
+    USUARIO = "WS_COLSERAUTO"
 
     print("\n--- Endpoint Health Check ---")
     health_status, _ = health_check()
     print("Health Status:", health_status)
 
     print("\n--- Endpoint Consulta de Inspección ---")
-    consulta_status, consulta_response = consultar_inspeccion(placa="DXL632")
+    consulta_status, consulta_response = consultar_inspeccion(placa="COL001")
     print("Consulta Status:", consulta_status)
+    print("Consulta Response:", consulta_response)
+ 
 
     print("\n--- Endpoint Gestión de Inspección ---")
     gestion_status, gestion_response = gestionar_inspeccion(
