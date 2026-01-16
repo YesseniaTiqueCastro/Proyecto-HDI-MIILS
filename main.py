@@ -9,7 +9,6 @@ if __name__ == "__main__":
     print("Consumo HDI")
 
     ID_INSPECCION = "12274"
-    USUARIO = "PROVEEDOR_DD"
 
     print("\n--- Endpoint Health Check ---")
     health_status, _ = health_check()
@@ -18,13 +17,17 @@ if __name__ == "__main__":
     print("\n--- Endpoint Consulta de Inspección ---")
     consulta_status, consulta_response = consultar_inspeccion(placa="DXL632")
     print("Consulta Status:", consulta_status)
+    print("Consulta Response:", consulta_response)
 
-    print("\n--- Endpoint Gestión de Inspección ---")
+    print("\n--- Endpoint Gestión de Inspección (MOCK) ---")
     gestion_status, gestion_response = gestionar_inspeccion(
         id_inspeccion=ID_INSPECCION,
-        usuario=USUARIO,
         fecha_hora_inspeccion="2026-01-13T10:30:00Z",
-        fecha_hora_salida_inspeccion="2026-01-13T11:00:00Z"
+        fecha_hora_salida_inspeccion="2026-01-13T11:00:00Z",
+        aprobacion_identificacion=False,
+        razon_identificacion=35,
+        aprobacion_operario=False,
+        razon_operario=20
     )
     print("Gestión Status:", gestion_status)
     print("Gestión Response:", gestion_response)
@@ -32,7 +35,7 @@ if __name__ == "__main__":
     print("\n--- Endpoint Generar Presigned URL Fotos ---")
     upload_status, upload_response = generar_presigned_url_fotos(
         id_inspeccion=ID_INSPECCION,
-        usuario=USUARIO
+        usuario="WS_COLSERAUTO"
     )
     print("Upload Status:", upload_status)
     print("Upload Response:", upload_response)
@@ -40,7 +43,7 @@ if __name__ == "__main__":
     print("\n--- Endpoint Estado Cargue de Fotos ---")
     status_code, status_response = consultar_estado_cargue_fotos(
         id_inspeccion=ID_INSPECCION,
-        usuario=USUARIO
+        usuario="WS_COLSERAUTO"
     )
     print("Status Fotos:", status_code)
     print("Response Fotos:", status_response)

@@ -4,13 +4,51 @@ from app.config.settings import HDI_BASE_URL, GESTION_INSPECCION_ENDPOINT
 from datetime import datetime
 import uuid
 
+USUARIO_PROVEEDOR = "WS_COLSERAUTO"
+
+USE_MOCK = True
+
+
+def construir_aprobacion(aprobado: bool, razon_rechazo: int | None):
+    if aprobado:
+        return {
+            "aprobado": True,
+            "razonRechazo": None
+        }
+    else:
+        return {
+            "aprobado": False,
+            "razonRechazo": razon_rechazo
+        }
+
+
+def mock_gestionar_inspeccion(id_inspeccion):
+    return 200, {
+        "success": True,
+        "message": "Gestión de inspección procesada exitosamente (MOCK)",
+        "data": {
+            "idInspeccion": id_inspeccion,
+            "estado": "GESTIONADA",
+            "fechaProcesamiento": datetime.utcnow().isoformat() + "Z"
+        }
+    }
+
 
 def gestionar_inspeccion(
     id_inspeccion,
-    usuario,
     fecha_hora_inspeccion,
-    fecha_hora_salida_inspeccion
+    fecha_hora_salida_inspeccion,
+    aprobacion_identificacion,
+    razon_identificacion,
+    aprobacion_operario,
+    razon_operario,
+    calificaciones=None,
+    accesorios=None,
+    comentarios=None
 ):
+    if USE_MOCK:
+        return mock_gestionar_inspeccion(id_inspeccion)
+
     token = obtener_token()
 
     headers = {
@@ -30,7 +68,7 @@ def gestionar_inspeccion(
             "operacion": "GESTIONAR",
             "lineaNegocio": "AUTOS",
             "inspeccion": {
-                "usuarioCreador": usuario,
+                "usuarioCreador": USUARIO_PROVEEDOR,
                 "fechaHoraInspeccion": fecha_hora_inspeccion,
                 "fechaHoraSalidaInspeccion": fecha_hora_salida_inspeccion,
                 "tipo": 9700,
@@ -48,16 +86,18 @@ def gestionar_inspeccion(
                 "tipoPintura": 1,
                 "caja": 2
             },
-            "calificaciones": [],
+            "calificaciones": calificaciones or [],
+            "accesorios": accesorios or [],
+            "comentarios": comentarios or [],
             "aprobacion": {
-                "identificacion": {
-                    "aprobado": False,
-                    "razonRechazo": 35
-                },
-                "operario": {
-                    "aprobado": False,
-                    "razonRechazo": 2
-                }
+                "identificacion": construir_aprobacion(
+                    aprobado=aprobacion_identificacion,
+                    razon_rechazo=razon_identificacion
+                ),
+                "operario": construir_aprobacion(
+                    aprobado=aprobacion_operario,
+                    razon_rechazo=razon_operario
+                )
             }
         }
     }
@@ -69,3 +109,10 @@ def gestionar_inspeccion(
     )
 
     return response.status_code, response.json()
+
+
+
+
+
+
+
