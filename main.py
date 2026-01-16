@@ -16,7 +16,7 @@ if __name__ == "__main__":
     print("Health Status:", health_status)
 
     print("\n--- Endpoint Consulta de Inspección ---")
-    consulta_status, consulta_response = consultar_inspeccion(placa="COL001")
+    consulta_status, consulta_response = consultar_inspeccion(placa="DXL632")
     print("Consulta Status:", consulta_status)
     print("Consulta Response:", consulta_response)
  

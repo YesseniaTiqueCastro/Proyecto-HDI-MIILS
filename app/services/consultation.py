@@ -61,7 +61,7 @@ def consultar_inspeccion(id_inspeccion=None, placa=None):
         datos_auto = inspeccion.get("datosInspeccionAuto", {})
         vehiculo = datos_auto.get("vehiculo", {})
 
-      
+     
         consulta_siniestros = vehiculo.get("consultaSiniestros", {})
         siniestros_raw = consulta_siniestros.get("siniestros")
 
