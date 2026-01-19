@@ -1,26 +1,41 @@
-from app.core.auth import obtener_token
-from app.core.client import HDIClient
-from app.config.settings import HDI_BASE_URL, GESTION_INSPECCION_ENDPOINT
 from datetime import datetime
 import uuid
 
+from app.core.auth import obtener_token
+from app.core.client import HDIClient
+from app.config.settings import (
+    HDI_BASE_URL,
+    GESTION_INSPECCION_ENDPOINT,
+    USE_HDI_MOCK
+)
+
 USUARIO_PROVEEDOR = "WS_COLSERAUTO"
 
-USE_MOCK = True
 
+# =========================
+# Helpers
+# =========================
 
 def construir_aprobacion(aprobado: bool, razon_rechazo: int | None):
-    if aprobado:
-        return {
-            "aprobado": True,
-            "razonRechazo": None
-        }
-    else:
-        return {
-            "aprobado": False,
-            "razonRechazo": razon_rechazo
-        }
+    return {
+        "aprobado": aprobado,
+        "razonRechazo": None if aprobado else razon_rechazo
+    }
 
+
+def construir_info_request():
+    return {
+        "requestID": str(uuid.uuid4()),
+        "fecha": datetime.utcnow().isoformat() + "Z",
+        "aplicacionCliente": "12",
+        "terminal": "Colserauto",
+        "ip": "1.1.1.1"
+    }
+
+
+# =========================
+# MOCK
+# =========================
 
 def mock_gestionar_inspeccion(id_inspeccion):
     return 200, {
@@ -34,19 +49,25 @@ def mock_gestionar_inspeccion(id_inspeccion):
     }
 
 
+
+
 def gestionar_inspeccion(
-    id_inspeccion,
-    fecha_hora_inspeccion,
-    fecha_hora_salida_inspeccion,
-    aprobacion_identificacion,
-    razon_identificacion,
-    aprobacion_operario,
-    razon_operario,
-    calificaciones=None,
-    accesorios=None,
-    comentarios=None
+    id_inspeccion: str,
+    inspeccion: dict,
+    aprobacion_identificacion: bool,
+    razon_identificacion: int | None,
+    aprobacion_operario: bool,
+    razon_operario: int | None,
+    calificaciones: list | None = None,
+    accesorios: list | None = None,
+    comentarios: list | None = None
 ):
-    if USE_MOCK:
+    """
+    Gestiona una inspección de HDI.
+    método es reutilizable para HDI / HALCON.
+    """
+
+    if USE_HDI_MOCK:
         return mock_gestionar_inspeccion(id_inspeccion)
 
     token = obtener_token()
@@ -57,34 +78,13 @@ def gestionar_inspeccion(
     }
 
     body = {
-        "infoRequest": {
-            "requestID": str(uuid.uuid4()),
-            "fecha": datetime.utcnow().isoformat() + "Z",
-            "aplicacionCliente": "12",
-            "terminal": "Colserauto",
-            "ip": "1.1.1.1"
-        },
+        "infoRequest": construir_info_request(),
         "solicitud": {
             "operacion": "GESTIONAR",
             "lineaNegocio": "AUTOS",
             "inspeccion": {
                 "usuarioCreador": USUARIO_PROVEEDOR,
-                "fechaHoraInspeccion": fecha_hora_inspeccion,
-                "fechaHoraSalidaInspeccion": fecha_hora_salida_inspeccion,
-                "tipo": 9700,
-                "codigoFasecolda": "08002067",
-                "servicio": 1,
-                "chasis": "9FBC066052L789924",
-                "serial": "9FBC066052L789924",
-                "motor": "B700F730724",
-                "modelo": 2002,
-                "color": 0,
-                "tipoCarroceria": 6,
-                "tipoVehiculo": 1,
-                "kilometraje": 170000,
-                "kilometrajePorAnio": 8718,
-                "tipoPintura": 1,
-                "caja": 2
+                **inspeccion
             },
             "calificaciones": calificaciones or [],
             "accesorios": accesorios or [],
@@ -107,12 +107,6 @@ def gestionar_inspeccion(
         headers=headers,
         json=body
     )
-
+    
     return response.status_code, response.json()
-
-
-
-
-
-
-
+    
