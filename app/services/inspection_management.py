@@ -8,23 +8,20 @@ USUARIO_PROVEEDOR = "WS_COLSERAUTO"
 
 
 def construir_aprobacion(aprobado: bool, razon_rechazo: int | None):
-    return {
-        "aprobado": aprobado,
-        "razonRechazo": None if aprobado else razon_rechazo
-    }
+    if aprobado:
+        return {
+            "aprobado": True,
+            "razonRechazo": None
+        }
+    else:
+        return {
+            "aprobado": False,
+            "razonRechazo": razon_rechazo
+        }
 
 
-def mock_gestionar_inspeccion(
-    id_inspeccion,
-    fecha_hora_inspeccion,
-    fecha_hora_salida_inspeccion
-):
-    """
-    MOCK contractual:
-    - Respeta exactamente el response de HDI
-    - No quema lógica
-    - Usa datos del request
-    """
+def mock_gestionar_inspeccion(id_inspeccion):
+    request_id = str(uuid.uuid4())
 
     return 200, {
         "infoResponse": {
@@ -34,15 +31,14 @@ def mock_gestionar_inspeccion(
                 "descripcionEstado": "Se ejecutó satisfactoriamente la operación solicitada.",
                 "severidad": "INFO"
             },
-            "requestID": str(uuid.uuid4())
+            "requestID": request_id
         },
         "solicitud": {
             "operacion": "GESTIONAR",
             "lineaNegocio": "AUTOS",
             "inspeccion": {
-                "idInspeccion": id_inspeccion,
                 "estadoInspeccion": "ACTUALIZADA",
-                "fechaFinInspeccion": fecha_hora_salida_inspeccion
+                "fechaFinInspeccion": None
             }
         }
     }
@@ -61,11 +57,7 @@ def gestionar_inspeccion(
     comentarios=None
 ):
     if USE_HDI_MOCK:
-        return mock_gestionar_inspeccion(
-            id_inspeccion=id_inspeccion,
-            fecha_hora_inspeccion=fecha_hora_inspeccion,
-            fecha_hora_salida_inspeccion=fecha_hora_salida_inspeccion
-        )
+        return mock_gestionar_inspeccion(id_inspeccion)
 
     token = obtener_token()
 
