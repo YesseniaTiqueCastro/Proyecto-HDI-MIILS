@@ -1,4 +1,4 @@
 export interface CatalogItem {
   id: number;
-  descripcion: string;
+  name: string;
 }
