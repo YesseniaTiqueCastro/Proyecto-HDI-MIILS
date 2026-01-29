@@ -1,0 +1,28 @@
+<h2>Órdenes pendientes por auditar</h2>
+
+<div *ngIf="loading">Cargando órdenes...</div>
+
+<table *ngIf="!loading && pendingInspections.length">
+  <thead>
+    <tr>
+      <th>Orden</th>
+      <th>Chasis</th>
+      <th>Acción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of pendingInspections">
+      <td>{{ item.orderNumber }}</td>
+      <td>{{ item.chassis }}</td>
+      <td>
+        <button (click)="openInspection(item.inspectionId)">
+          Inspeccionar
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<div *ngIf="!loading && !pendingInspections.length">
+  No hay órdenes pendientes.
+</div>
