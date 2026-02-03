@@ -1,5 +1,15 @@
 # Archivos Python
 __pycache__/
+*.pyc
+.venv/
+venv/
+
+# Env
+.env
+
+# OS
+.DS_Store
+
 # ===== Archivos Environment =====
 .env
 .venv/
