@@ -1,18 +1,24 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from app.core.auth import obtener_token
 from app.core.client import HDIClient
 from app.config.settings import HDI_BASE_URL, GESTION_INSPECCION_ENDPOINT
 from datetime import datetime
 import uuid
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/inspection",
+    tags=["Inspection"]
+)
 
 def _gestionar_inspeccion_logica(
-    id_inspeccion,
-    usuario,
-    fecha_hora_inspeccion,
-    fecha_hora_salida_inspeccion
+    id_inspeccion: str,
+    usuario: str,
+    fecha_hora_inspeccion: str,
+    fecha_hora_salida_inspeccion: str
 ):
+    """
+    Lógica pura HDI: gestiona una inspección
+    """
     token = obtener_token()
 
     headers = {
@@ -47,19 +53,23 @@ def _gestionar_inspeccion_logica(
 
     return response.status_code, response.json()
 
+
 @router.post("/{id_inspeccion}")
 def gestionar_inspeccion(
     id_inspeccion: str,
-    usuario: str,
-    fecha_hora_inspeccion: str,
-    fecha_hora_salida_inspeccion: str
+    usuario: str = Query(..., description="Usuario inspector"),
+    fecha_hora_inspeccion: str = Query(..., description="Fecha hora inspección"),
+    fecha_hora_salida_inspeccion: str = Query(..., description="Fecha hora salida")
 ):
+    """
+    Endpoint FastAPI para gestionar una inspección HDI
+    """
     try:
         status, data = _gestionar_inspeccion_logica(
-            id_inspeccion,
-            usuario,
-            fecha_hora_inspeccion,
-            fecha_hora_salida_inspeccion
+            id_inspeccion=id_inspeccion,
+            usuario=usuario,
+            fecha_hora_inspeccion=fecha_hora_inspeccion,
+            fecha_hora_salida_inspeccion=fecha_hora_salida_inspeccion
         )
         return {
             "status": status,
