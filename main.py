@@ -1,8 +1,22 @@
+from fastapi import FastAPI
+
 from app.services.health import health_check
 from app.services.consultation import consultar_inspeccion
 from app.services.inspection_management import gestionar_inspeccion
 from app.services.photo_upload import generar_presigned_url_fotos
 from app.services.photo_upload_status import consultar_estado_cargue_fotos
+
+app = FastAPI(
+    title="API Gestión Archivos Inspecciones",
+    version="1.0.0"
+)
+
+app.include_router(health_check)
+app.include_router(consultar_inspeccion)
+app.include_router(gestionar_inspeccion)
+app.include_router(generar_presigned_url_fotos)
+app.include_router(consultar_estado_cargue_fotos)
+
 
 
 if __name__ == "__main__":
