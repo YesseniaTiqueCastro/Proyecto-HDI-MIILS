@@ -1,64 +1,18 @@
+from fastapi import APIRouter, HTTPException
 from app.core.auth import obtener_token
 from app.core.client import HDIClient
-from app.config.settings import HDI_BASE_URL, GESTION_INSPECCION_ENDPOINT, USE_HDI_MOCK
+from app.config.settings import HDI_BASE_URL, GESTION_INSPECCION_ENDPOINT
 from datetime import datetime
 import uuid
 
-USUARIO_PROVEEDOR = "WS_COLSERAUTO"
+router = APIRouter()
 
-
-def construir_aprobacion(aprobado: bool, razon_rechazo: int | None):
-    if aprobado:
-        return {
-            "aprobado": True,
-            "razonRechazo": None
-        }
-    else:
-        return {
-            "aprobado": False,
-            "razonRechazo": razon_rechazo
-        }
-
-
-def mock_gestionar_inspeccion(id_inspeccion):
-    request_id = str(uuid.uuid4())
-
-    return 200, {
-        "infoResponse": {
-            "estado": {
-                "codigoEstado": "0",
-                "codigoEstadoServidor": "0",
-                "descripcionEstado": "Se ejecutó satisfactoriamente la operación solicitada.",
-                "severidad": "INFO"
-            },
-            "requestID": request_id
-        },
-        "solicitud": {
-            "operacion": "GESTIONAR",
-            "lineaNegocio": "AUTOS",
-            "inspeccion": {
-                "estadoInspeccion": "ACTUALIZADA",
-                "fechaFinInspeccion": None
-            }
-        }
-    }
-
-
-def gestionar_inspeccion(
+def _gestionar_inspeccion_logica(
     id_inspeccion,
+    usuario,
     fecha_hora_inspeccion,
-    fecha_hora_salida_inspeccion,
-    aprobacion_identificacion,
-    razon_identificacion,
-    aprobacion_operario,
-    razon_operario,
-    calificaciones=None,
-    accesorios=None,
-    comentarios=None
+    fecha_hora_salida_inspeccion
 ):
-    if USE_HDI_MOCK:
-        return mock_gestionar_inspeccion(id_inspeccion)
-
     token = obtener_token()
 
     headers = {
@@ -78,36 +32,9 @@ def gestionar_inspeccion(
             "operacion": "GESTIONAR",
             "lineaNegocio": "AUTOS",
             "inspeccion": {
-                "usuarioCreador": USUARIO_PROVEEDOR,
+                "usuarioCreador": usuario,
                 "fechaHoraInspeccion": fecha_hora_inspeccion,
-                "fechaHoraSalidaInspeccion": fecha_hora_salida_inspeccion,
-                "tipo": 9700,
-                "codigoFasecolda": "08002067",
-                "servicio": 1,
-                "chasis": "9FBC066052L789924",
-                "serial": "9FBC066052L789924",
-                "motor": "B700F730724",
-                "modelo": 2002,
-                "color": 0,
-                "tipoCarroceria": 6,
-                "tipoVehiculo": 1,
-                "kilometraje": 170000,
-                "kilometrajePorAnio": 8718,
-                "tipoPintura": 1,
-                "caja": 2
-            },
-            "calificaciones": calificaciones or [],
-            "accesorios": accesorios or [],
-            "comentarios": comentarios or [],
-            "aprobacion": {
-                "identificacion": construir_aprobacion(
-                    aprobado=aprobacion_identificacion,
-                    razon_rechazo=razon_identificacion
-                ),
-                "operario": construir_aprobacion(
-                    aprobado=aprobacion_operario,
-                    razon_rechazo=razon_operario
-                )
+                "fechaHoraSalidaInspeccion": fecha_hora_salida_inspeccion
             }
         }
     }
@@ -119,3 +46,24 @@ def gestionar_inspeccion(
     )
 
     return response.status_code, response.json()
+
+@router.post("/{id_inspeccion}")
+def gestionar_inspeccion(
+    id_inspeccion: str,
+    usuario: str,
+    fecha_hora_inspeccion: str,
+    fecha_hora_salida_inspeccion: str
+):
+    try:
+        status, data = _gestionar_inspeccion_logica(
+            id_inspeccion,
+            usuario,
+            fecha_hora_inspeccion,
+            fecha_hora_salida_inspeccion
+        )
+        return {
+            "status": status,
+            "response": data
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
