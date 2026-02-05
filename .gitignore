@@ -1,8 +1,16 @@
-# Archivos Python
+# Python
+venv/
 __pycache__/
-# ===== Archivos Environment =====
-.env
-.venv/
+*.pyc
 
-# ===== Achivos secretos =====
-*.key
+# Entorno
+.env
+
+# Editor
+.vscode/
+
+# Frontend (si aplica)
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/
