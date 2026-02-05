@@ -5,15 +5,17 @@ from app.config.settings import HDI_BASE_URL
 
 UPLOAD_STATUS_ENDPOINT = "/management-inspections/uploadphotos/status"
 
-router = APIRouter(prefix="/photos", tags=["Photos"])
-
+router = APIRouter(
+    prefix="/photos",
+    tags=["Photos"]
+)
 
 def _consultar_estado_cargue_fotos_logica(
     id_inspeccion: str,
     usuario: str
 ):
     """
-    Lógica pura: consulta el estado del cargue y validación de fotos en HDI
+    Lógica pura HDI: consulta el estado del cargue y validación de fotos
     """
     token = obtener_token()
 
