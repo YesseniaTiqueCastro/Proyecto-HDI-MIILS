@@ -1,2 +1,94 @@
-<h1>Prevalidador HDI</h1>
-<p>Vista funcionando </p>
+<mat-card class="prevalidator-card">
+  <mat-card-title>Prevalidador – Datos de Inspección</mat-card-title>
+  <mat-divider></mat-divider>
+
+  <form [formGroup]="form" class="form-grid">
+
+    
+    <mat-form-field appearance="outline">
+      <mat-label>Fecha Hora Inspección</mat-label>
+      <input matInput formControlName="fechaHoraInspeccion" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Fecha Hora Salida Inspección</mat-label>
+      <input matInput formControlName="fechaHoraSalidaInspeccion" />
+    </mat-form-field>
+
+    
+    <mat-form-field appearance="outline">
+      <mat-label>Tipo</mat-label>
+      <input matInput formControlName="tipo" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Código Fasecolda</mat-label>
+      <input matInput formControlName="codigoFasecolda" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Servicio</mat-label>
+      <input matInput formControlName="servicio" />
+    </mat-form-field>
+
+    
+    <mat-form-field appearance="outline">
+      <mat-label>Chasis</mat-label>
+      <input matInput formControlName="chasis" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Serial</mat-label>
+      <input matInput formControlName="serial" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Motor</mat-label>
+      <input matInput formControlName="motor" />
+    </mat-form-field>
+
+    
+    <mat-form-field appearance="outline">
+      <mat-label>Modelo</mat-label>
+      <input matInput formControlName="modelo" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Color</mat-label>
+      <input matInput formControlName="color" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Tipo Carrocería</mat-label>
+      <input matInput formControlName="tipoCarroceria" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Tipo Vehículo</mat-label>
+      <input matInput formControlName="tipoVehiculo" />
+    </mat-form-field>
+
+    
+    <mat-form-field appearance="outline">
+      <mat-label>Kilometraje</mat-label>
+      <input matInput formControlName="kilometraje" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Kilometraje por Año</mat-label>
+      <input matInput formControlName="kilometrajePorAnio" />
+    </mat-form-field>
+
+ 
+    <mat-form-field appearance="outline">
+      <mat-label>Tipo Pintura</mat-label>
+      <input matInput formControlName="tipoPintura" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Caja</mat-label>
+      <input matInput formControlName="caja" />
+    </mat-form-field>
+
+  </form>
+</mat-card>
