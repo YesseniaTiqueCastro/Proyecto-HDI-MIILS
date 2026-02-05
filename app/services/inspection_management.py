@@ -1,16 +1,24 @@
+from fastapi import APIRouter, HTTPException, Query
 from app.core.auth import obtener_token
 from app.core.client import HDIClient
 from app.config.settings import HDI_BASE_URL, GESTION_INSPECCION_ENDPOINT
 from datetime import datetime
 import uuid
 
+router = APIRouter(
+    prefix="/inspection",
+    tags=["Inspection"]
+)
 
-def gestionar_inspeccion(
-    id_inspeccion,
-    usuario,
-    fecha_hora_inspeccion,
-    fecha_hora_salida_inspeccion
+def _gestionar_inspeccion_logica(
+    id_inspeccion: str,
+    usuario: str,
+    fecha_hora_inspeccion: str,
+    fecha_hora_salida_inspeccion: str
 ):
+    """
+    Lógica pura HDI: gestiona una inspección
+    """
     token = obtener_token()
 
     headers = {
@@ -32,32 +40,7 @@ def gestionar_inspeccion(
             "inspeccion": {
                 "usuarioCreador": usuario,
                 "fechaHoraInspeccion": fecha_hora_inspeccion,
-                "fechaHoraSalidaInspeccion": fecha_hora_salida_inspeccion,
-                "tipo": 9700,
-                "codigoFasecolda": "08002067",
-                "servicio": 1,
-                "chasis": "9FBC066052L789924",
-                "serial": "9FBC066052L789924",
-                "motor": "B700F730724",
-                "modelo": 2002,
-                "color": 0,
-                "tipoCarroceria": 6,
-                "tipoVehiculo": 1,
-                "kilometraje": 170000,
-                "kilometrajePorAnio": 8718,
-                "tipoPintura": 1,
-                "caja": 2
-            },
-            "calificaciones": [],
-            "aprobacion": {
-                "identificacion": {
-                    "aprobado": False,
-                    "razonRechazo": 35
-                },
-                "operario": {
-                    "aprobado": False,
-                    "razonRechazo": 2
-                }
+                "fechaHoraSalidaInspeccion": fecha_hora_salida_inspeccion
             }
         }
     }
@@ -69,3 +52,28 @@ def gestionar_inspeccion(
     )
 
     return response.status_code, response.json()
+
+
+@router.post("/{id_inspeccion}")
+def gestionar_inspeccion(
+    id_inspeccion: str,
+    usuario: str = Query(..., description="Usuario inspector"),
+    fecha_hora_inspeccion: str = Query(..., description="Fecha hora inspección"),
+    fecha_hora_salida_inspeccion: str = Query(..., description="Fecha hora salida")
+):
+    """
+    Endpoint FastAPI para gestionar una inspección HDI
+    """
+    try:
+        status, data = _gestionar_inspeccion_logica(
+            id_inspeccion=id_inspeccion,
+            usuario=usuario,
+            fecha_hora_inspeccion=fecha_hora_inspeccion,
+            fecha_hora_salida_inspeccion=fecha_hora_salida_inspeccion
+        )
+        return {
+            "status": status,
+            "response": data
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

@@ -8,7 +8,9 @@ HDI_BASE_URL = os.getenv(
     "HDI_BASE_URL",
     "https://nonprod-apis-auto.hdiseguros.com.co"
     
+    
 )
+
 
 # ENDPOINTS
 HEALTH_ENDPOINT = "/vehicle-services/health"
@@ -24,3 +26,6 @@ UPLOAD_PHOTOS_STATUS_ENDPOINT = "/management-inspections/uploadphotos/status"
 
 HDI_CLIENT_ID = os.getenv("HDI_CLIENT_ID")
 HDI_CLIENT_SECRET = os.getenv("HDI_CLIENT_SECRET")
+
+
+USE_HDI_MOCK = True
