@@ -5,22 +5,22 @@ from app.config.settings import HDI_BASE_URL, CONSULTA_INSPECCION_ENDPOINT
 from datetime import datetime
 import uuid
 
-router = APIRouter(prefix="/consultation", tags=["Consultation"])
 
+router = APIRouter(
+    prefix="/inspection",
+    tags=["Inspection"]
+)
 
-def _consultar_inspeccion_logica(
-    id_inspeccion: str | None = None,
-    placa: str | None = None
-):
+def _consultar_inspeccion_logica(id_inspeccion=None, placa=None):
     token = obtener_token()
-
-    if not id_inspeccion and not placa:
-        raise ValueError("Debes consultar por id_inspeccion o placa")
 
     headers = {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json"
     }
+
+    if not id_inspeccion and not placa:
+        raise ValueError("Debe enviar id_inspeccion o placa")
 
     body = {
         "crearInspMIILSRq": {
@@ -40,7 +40,7 @@ def _consultar_inspeccion_logica(
     }
 
     if id_inspeccion:
-        body["crearInspMIILSRq"]["solicitud"]["inspeccion"]["idInspeccion"] = id_inspeccion
+        body["crearInspMIILSRq"]["solicitud"]["inspeccion"]["idInspeccion"] = str(id_inspeccion)
 
     if placa:
         body["crearInspMIILSRq"]["solicitud"]["inspeccion"]["placa"] = placa
@@ -78,15 +78,12 @@ def _consultar_inspeccion_logica(
         "raw_response": response_json
     }
 
-
 @router.get("/consultar")
 def consultar_inspeccion(
-    id_inspeccion: str | None = Query(None, description="ID de la inspección"),
-    placa: str | None = Query(None, description="Placa del vehículo")
+    id_inspeccion: str | None = Query(default=None),
+    placa: str | None = Query(default=None)
 ):
     try:
         return _consultar_inspeccion_logica(id_inspeccion, placa)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
