@@ -6,6 +6,9 @@ from app.config.settings import HDI_BASE_URL, HEALTH_ENDPOINT
 router = APIRouter()
 
 def _health_check_logica():
+    """
+    Lógica pura HDI: verificación de disponibilidad del servicio
+    """
     token = obtener_token()
 
     headers = {
@@ -21,6 +24,9 @@ def _health_check_logica():
 
 @router.get("/")
 def health_check():
+    """
+    Endpoint FastAPI: health check de verificación de servicios HDI
+    """
     try:
         status_code, data = _health_check_logica()
         return {
