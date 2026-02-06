@@ -1,3 +1,18 @@
-flask
-request
+# Framework principal para el back
+fastapi
+
+# Servidor ASGI de alto rendimiento para correr la aplicación
+uvicorn[standard]
+
+# Cliente HTTP para realizar peticiones externas a otros servicios
+requests
+
+# Gestión de configuraciones y secretos mediante archivos .env
 python-dotenv
+
+# Adaptador de base de datos para conectar con PostgreSQL
+psycopg2-binary
+
+# Modelado y validación de datos mediante tipos de Python
+pydantic
+
