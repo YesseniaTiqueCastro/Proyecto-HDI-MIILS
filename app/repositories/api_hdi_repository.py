@@ -1,17 +1,15 @@
-# app/repositories/api_hdi_repository.py
-
 from sqlalchemy import text
-from app.db.session import get_db
+from sqlalchemy.orm import Session
+
 
 class ApiHDIRepository:
 
     @staticmethod
     def get_by_placa_or_inspeccion(
+        db: Session,
         placa: str | None = None,
         id_service: int | None = None
     ):
-        db = next(get_db())
-
         query = """
         SELECT
             id_service,
@@ -48,5 +46,10 @@ class ApiHDIRepository:
             query += " AND id_service = :id_service"
             params["id_service"] = id_service
 
-        result = db.execute(text(query), params).mappings().first()
+        result = (
+            db.execute(text(query), params)
+            .mappings()
+            .first()
+        )
+
         return result
