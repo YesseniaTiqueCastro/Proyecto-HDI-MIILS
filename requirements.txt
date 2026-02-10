@@ -12,6 +12,7 @@ python-dotenv
 
 # Adaptador de base de datos para conectar con PostgreSQL
 psycopg2-binary
+sqlalchemy
 
 # Modelado y validación de datos mediante tipos de Python
 pydantic

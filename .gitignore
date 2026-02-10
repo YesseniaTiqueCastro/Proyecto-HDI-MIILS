@@ -1,28 +1,23 @@
-# ======================
 # Python
-# ======================
 venv/
 __pycache__/
 *.pyc
+ven/
 
-# ======================
 # Environment
-# ======================
 .env
 
-# ======================
-# Editor
-# ======================
+# Editor de código
 .vscode/
 
-# ======================
+
 # Frontend - artefactos
-# ======================
+
 frontend/**/node_modules/
 frontend/**/dist/
 frontend/**/build/
 
-# ======================
-# Frontend viejo (NO se versiona)
-# ======================
+
+# Frontend viejo 
+
 frontend/prevalidator/
