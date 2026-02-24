@@ -1,94 +1,158 @@
 <mat-card class="prevalidator-card">
-  <mat-card-title>Prevalidador – Datos de Inspección</mat-card-title>
+
+  <mat-card-title>
+    Prevalidador – Datos de Inspección
+  </mat-card-title>
+
   <mat-divider></mat-divider>
+
+  <!-- ========= PARAMETROS DE BÚSQUEDA ========= -->
+
+  <div class="form-grid">
+
+    <!-- PARAMETRO DE PLACA -->
+    <mat-form-field appearance="outline">
+      <mat-label>Placa</mat-label>
+
+      <input
+        matInput
+        [(ngModel)]="placaBusqueda"
+        [disabled]="bloquearPlaca">
+
+      <button
+        *ngIf="placaBusqueda"
+        matSuffix
+        mat-icon-button
+        (click)="limpiarBusqueda()">
+        <mat-icon>cleaning_services</mat-icon>
+      </button>
+    </mat-form-field>
+
+    <!-- PARAMETRO DE ID -->
+    <mat-form-field appearance="outline">
+      <mat-label>ID Inspección</mat-label>
+
+      <input
+        matInput
+        [(ngModel)]="idBusqueda"
+        [disabled]="bloquearId">
+
+      <button
+        *ngIf="idBusqueda"
+        matSuffix
+        mat-icon-button
+        (click)="limpiarBusqueda()">
+        <mat-icon>cleaning_services</mat-icon>
+      </button>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" (click)="consultar()">
+      Consultar
+    </button>
+
+    <!-- LIMPIEZA DEL PREVALIDADOR -->
+    <button mat-raised-button color="warn" (click)="limpiarFormulario()">
+      Limpiar formulario
+    </button>
+
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <!-- ========= PREVALIDADOR ========= -->
 
   <form [formGroup]="form" class="form-grid">
 
-    
     <mat-form-field appearance="outline">
       <mat-label>Fecha Hora Inspección</mat-label>
-      <input matInput formControlName="fechaHoraInspeccion" />
+      <input matInput formControlName="fechaHoraInspeccion">
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-      <mat-label>Fecha Hora Salida Inspección</mat-label>
-      <input matInput formControlName="fechaHoraSalidaInspeccion" />
+      <mat-label>Fecha Hora Salida</mat-label>
+      <input matInput formControlName="fechaHoraSalidaInspeccion">
     </mat-form-field>
 
-    
     <mat-form-field appearance="outline">
       <mat-label>Tipo</mat-label>
-      <input matInput formControlName="tipo" />
+      <input matInput formControlName="tipo" readonly>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Código Fasecolda</mat-label>
-      <input matInput formControlName="codigoFasecolda" />
+      <input matInput formControlName="codigoFasecolda" readonly>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Servicio</mat-label>
-      <input matInput formControlName="servicio" />
+      <mat-select formControlName="servicio">
+        <mat-option *ngFor="let s of servicios" [value]="s">
+          {{s}}
+        </mat-option>
+      </mat-select>
     </mat-form-field>
 
-    
     <mat-form-field appearance="outline">
       <mat-label>Chasis</mat-label>
-      <input matInput formControlName="chasis" />
+      <input matInput formControlName="chasis">
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Serial</mat-label>
-      <input matInput formControlName="serial" />
+      <input matInput formControlName="serial">
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Motor</mat-label>
-      <input matInput formControlName="motor" />
+      <input matInput formControlName="motor">
     </mat-form-field>
 
-    
     <mat-form-field appearance="outline">
       <mat-label>Modelo</mat-label>
-      <input matInput formControlName="modelo" />
+      <input matInput formControlName="modelo">
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Color</mat-label>
-      <input matInput formControlName="color" />
+      <mat-select formControlName="color">
+        <mat-option *ngFor="let c of colores" [value]="c">
+          {{c}}
+        </mat-option>
+      </mat-select>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Tipo Carrocería</mat-label>
-      <input matInput formControlName="tipoCarroceria" />
+      <mat-select formControlName="tipoCarroceria">
+        <mat-option *ngFor="let t of tiposCarroceria" [value]="t">
+          {{t}}
+        </mat-option>
+      </mat-select>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Tipo Vehículo</mat-label>
-      <input matInput formControlName="tipoVehiculo" />
+      <mat-select formControlName="tipoVehiculo">
+        <mat-option *ngFor="let t of tiposVehiculo" [value]="t">
+          {{t}}
+        </mat-option>
+      </mat-select>
     </mat-form-field>
 
-    
     <mat-form-field appearance="outline">
       <mat-label>Kilometraje</mat-label>
-      <input matInput formControlName="kilometraje" />
+      <input matInput formControlName="kilometraje">
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-      <mat-label>Kilometraje por Año</mat-label>
-      <input matInput formControlName="kilometrajePorAnio" />
-    </mat-form-field>
-
- 
-    <mat-form-field appearance="outline">
-      <mat-label>Tipo Pintura</mat-label>
-      <input matInput formControlName="tipoPintura" />
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Caja</mat-label>
-      <input matInput formControlName="caja" />
+      <mat-label>Tipo Caja</mat-label>
+      <mat-select formControlName="caja">
+        <mat-option *ngFor="let c of tiposCaja" [value]="c">
+          {{c}}
+        </mat-option>
+      </mat-select>
     </mat-form-field>
 
   </form>
+
 </mat-card>

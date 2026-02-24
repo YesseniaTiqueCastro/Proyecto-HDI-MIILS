@@ -1,14 +1,12 @@
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-
 class ApiHDIRepository:
 
     @staticmethod
-    def get_by_placa_or_inspeccion(
+    def get_by_inspeccion(
         db: Session,
-        placa: str | None = None,
-        id_service: int | None = None
+        id_service: str | None = None
     ):
         query = """
         SELECT
@@ -24,30 +22,16 @@ class ApiHDIRepository:
             numero_motor,
             numero_serie,
             color,
-            color_front,
-            color_id_hdi,
             carroceria,
-            carroceria_id_hdi,
             kilometraje,
             tipo_caja,
-            id_caja_hdi,
             codigo_fasecolda
         FROM api_hdi
-        WHERE 1=1
+        WHERE id_service = :id_service
         """
 
-        params = {}
-
-        if placa:
-            query += " AND placa = :placa"
-            params["placa"] = placa
-
-        if id_service:
-            query += " AND id_service = :id_service"
-            params["id_service"] = id_service
-
         result = (
-            db.execute(text(query), params)
+            db.execute(text(query), {"id_service": id_service})
             .mappings()
             .first()
         )

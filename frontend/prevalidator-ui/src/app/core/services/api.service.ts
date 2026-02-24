@@ -12,12 +12,23 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
-  consultarInspeccion(idInspeccion: string): Observable<any> {
-    return this.http.get(
-      `${this.baseUrl}/consultation/inspection/consultar`,
-      {
-        params: { id_inspeccion: idInspeccion }
-      }
-    );
-  }
+  /* ===============================
+     CONSULTA PREVALIDADOR HDI
+  =============================== */
+  consultarPrevalidador(
+  placa?: string,
+  idInspeccion?: string
+): Observable<any> {
+
+  const params: any = {};
+
+  if (placa) params.placa = placa;
+  if (idInspeccion) params.id_inspeccion = idInspeccion;
+
+  return this.http.get(
+    `${this.baseUrl}/consultation/inspection/consultar`,
+    { params }
+  );
+}
+
 }

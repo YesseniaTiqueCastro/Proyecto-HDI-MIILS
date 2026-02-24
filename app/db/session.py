@@ -13,19 +13,24 @@ DATABASE_URL = (
     f"{os.getenv('DB_NAME')}"
 )
 
-SSL_OPTIONS = {
-    "sslmode": "verify-full",
-    "sslrootcert": os.getenv("DB_SSL_ROOT_CERT"),
-    "sslcert": os.getenv("DB_SSL_CERT"),
-    "sslkey": os.getenv("DB_SSL_KEY"),
-}
+USE_SSL = os.getenv("DB_SSL", "false").lower() == "true"
+
+connect_args = {}
+
+if USE_SSL:
+    connect_args = {
+        "sslmode": "verify-full",
+        "sslrootcert": os.getenv("DB_SSL_ROOT_CERT"),
+        "sslcert": os.getenv("DB_SSL_CERT"),
+        "sslkey": os.getenv("DB_SSL_KEY"),
+    }
 
 engine = create_engine(
     DATABASE_URL,
     pool_pre_ping=True,
     pool_size=5,
     max_overflow=10,
-    connect_args=SSL_OPTIONS
+    connect_args=connect_args
 )
 
 SessionLocal = sessionmaker(
@@ -33,3 +38,10 @@ SessionLocal = sessionmaker(
     autoflush=False,
     bind=engine
 )
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
