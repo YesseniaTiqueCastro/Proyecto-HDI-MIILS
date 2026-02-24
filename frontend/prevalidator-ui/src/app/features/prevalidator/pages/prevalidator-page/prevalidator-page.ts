@@ -2,7 +2,7 @@ import { Component, DoCheck } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
-/* Angular Material */
+/* MATERIAL */
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -11,8 +11,18 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
-/* SERVICE BACKEND */
+/* SERVICE */
 import { ApiService } from '../../../../core/services/api.service';
+
+/* CATALOGOS */
+import {
+  SERVICIOS,
+  TIPOS_CAJA,
+  TIPOS_CARROCERIA,
+  TIPOS_VEHICULO,
+  COLORES,
+  TIPOS_PINTURA
+} from '../../../../core/catalogos_hdi';
 
 @Component({
   selector: 'app-prevalidator-page',
@@ -34,28 +44,28 @@ import { ApiService } from '../../../../core/services/api.service';
 })
 export class PrevalidatorPageComponent implements DoCheck {
 
-  /* ================= PARAMETROS DE BUSQUEDA ================= */
-  placaBusqueda: string = '';
-  idBusqueda: string = '';
+  placaBusqueda = '';
+  idBusqueda = '';
 
   bloquearPlaca = false;
   bloquearId = false;
   cargando = false;
 
-  /* ================= DESPLEGABLES  ================= */
-  servicios: string[] = ['Particular', 'Publico', 'Mixto'];
-  colores: string[] = ['Blanco', 'Negro', 'Rojo', 'Azul', 'Gris'];
-  tiposCarroceria: string[] = ['Sedan', 'SUV', 'Pickup', 'Hatchback'];
-  tiposVehiculo: string[] = ['Automovil', 'Camioneta', 'Moto'];
-  tiposCaja: string[] = ['Manual', 'Automatica'];
+  /* ===== CATÁLOGOS ===== */
+  servicios = SERVICIOS;
+  tiposCaja = TIPOS_CAJA;
+  tiposCarroceria = TIPOS_CARROCERIA;
+  tiposVehiculo = TIPOS_VEHICULO;
+  colores = COLORES;
+  tiposPintura = TIPOS_PINTURA;
 
-  /* ================= PREVALIDADOR ================= */
   form: FormGroup;
 
   constructor(
     private fb: FormBuilder,
     private apiService: ApiService
   ) {
+
     this.form = this.fb.group({
       fechaHoraInspeccion: [''],
       fechaHoraSalidaInspeccion: [''],
@@ -67,40 +77,29 @@ export class PrevalidatorPageComponent implements DoCheck {
       motor: [''],
       modelo: [''],
       color: [''],
+      tipoPintura: [''],
       tipoCarroceria: [''],
       tipoVehiculo: [''],
       kilometraje: [''],
-      kilometrajePorAnio: [''],
-      tipoPintura: [''],
       caja: [''],
     });
   }
 
-  /* ================= BLOQUEO DE PARAMETROS DE BUSQUEDA ================= */
   ngDoCheck() {
     this.bloquearPlaca = !!this.idBusqueda;
     this.bloquearId = !!this.placaBusqueda;
   }
 
-  /* ================= LIMPIAR BUSQUEDA INDIVISUAL ================= */
   limpiarBusqueda() {
     this.placaBusqueda = '';
     this.idBusqueda = '';
   }
 
-  /* ================= LIMPIAR PREVALIDADOR COMPLETO ================= */
   limpiarFormulario() {
-
     this.form.reset();
-
-    this.placaBusqueda = '';
-    this.idBusqueda = '';
-
-    this.form.markAsPristine();
-    this.form.markAsUntouched();
+    this.limpiarBusqueda();
   }
 
-  /* ================= CONSULTAR ================= */
   consultar() {
 
     if (this.cargando) return;
@@ -134,6 +133,7 @@ export class PrevalidatorPageComponent implements DoCheck {
           motor: data.vehiculo?.motor,
           modelo: data.vehiculo?.modelo,
           color: data.vehiculo?.color,
+          tipoPintura: data.vehiculo?.tipoPintura,
           tipoCarroceria: data.vehiculo?.carroceria,
           tipoVehiculo: data.vehiculo?.tipoVehiculo,
           kilometraje: data.vehiculo?.kilometraje,

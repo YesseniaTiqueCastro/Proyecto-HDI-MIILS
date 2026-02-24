@@ -6,21 +6,15 @@
 
   <mat-divider></mat-divider>
 
-  <!-- ========= PARAMETROS DE BÚSQUEDA ========= -->
+  <!-- ========= BUSQUEDA ========= -->
 
   <div class="form-grid">
 
-    <!-- PARAMETRO DE PLACA -->
     <mat-form-field appearance="outline">
       <mat-label>Placa</mat-label>
+      <input matInput [(ngModel)]="placaBusqueda" [disabled]="bloquearPlaca">
 
-      <input
-        matInput
-        [(ngModel)]="placaBusqueda"
-        [disabled]="bloquearPlaca">
-
-      <button
-        *ngIf="placaBusqueda"
+      <button *ngIf="placaBusqueda"
         matSuffix
         mat-icon-button
         (click)="limpiarBusqueda()">
@@ -28,17 +22,11 @@
       </button>
     </mat-form-field>
 
-    <!-- PARAMETRO DE ID -->
     <mat-form-field appearance="outline">
       <mat-label>ID Inspección</mat-label>
+      <input matInput [(ngModel)]="idBusqueda" [disabled]="bloquearId">
 
-      <input
-        matInput
-        [(ngModel)]="idBusqueda"
-        [disabled]="bloquearId">
-
-      <button
-        *ngIf="idBusqueda"
+      <button *ngIf="idBusqueda"
         matSuffix
         mat-icon-button
         (click)="limpiarBusqueda()">
@@ -50,7 +38,6 @@
       Consultar
     </button>
 
-    <!-- LIMPIEZA DEL PREVALIDADOR -->
     <button mat-raised-button color="warn" (click)="limpiarFormulario()">
       Limpiar formulario
     </button>
@@ -83,11 +70,12 @@
       <input matInput formControlName="codigoFasecolda" readonly>
     </mat-form-field>
 
+    <!-- SERVICIO -->
     <mat-form-field appearance="outline">
       <mat-label>Servicio</mat-label>
       <mat-select formControlName="servicio">
-        <mat-option *ngFor="let s of servicios" [value]="s">
-          {{s}}
+        <mat-option *ngFor="let s of servicios" [value]="s.id">
+          {{ s.nombre }}
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -112,29 +100,42 @@
       <input matInput formControlName="modelo">
     </mat-form-field>
 
+    <!-- COLOR -->
     <mat-form-field appearance="outline">
       <mat-label>Color</mat-label>
       <mat-select formControlName="color">
-        <mat-option *ngFor="let c of colores" [value]="c">
-          {{c}}
+        <mat-option *ngFor="let c of colores" [value]="c.id">
+          {{ c.nombre }}
         </mat-option>
       </mat-select>
     </mat-form-field>
 
+    <!-- TIPO PINTURA -->
+    <mat-form-field appearance="outline">
+      <mat-label>Tipo Pintura</mat-label>
+      <mat-select formControlName="tipoPintura">
+        <mat-option *ngFor="let p of tiposPintura" [value]="p.id">
+           {{ p.nombre }}
+        </mat-option>
+     </mat-select>
+    </mat-form-field>
+
+    <!-- CARROCERIA -->
     <mat-form-field appearance="outline">
       <mat-label>Tipo Carrocería</mat-label>
       <mat-select formControlName="tipoCarroceria">
-        <mat-option *ngFor="let t of tiposCarroceria" [value]="t">
-          {{t}}
+        <mat-option *ngFor="let t of tiposCarroceria" [value]="t.id">
+          {{ t.nombre }}
         </mat-option>
       </mat-select>
     </mat-form-field>
 
+    <!-- TIPO VEHICULO -->
     <mat-form-field appearance="outline">
       <mat-label>Tipo Vehículo</mat-label>
       <mat-select formControlName="tipoVehiculo">
-        <mat-option *ngFor="let t of tiposVehiculo" [value]="t">
-          {{t}}
+        <mat-option *ngFor="let t of tiposVehiculo" [value]="t.id">
+          {{ t.nombre }}
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -144,11 +145,12 @@
       <input matInput formControlName="kilometraje">
     </mat-form-field>
 
+    <!-- CAJA -->
     <mat-form-field appearance="outline">
       <mat-label>Tipo Caja</mat-label>
       <mat-select formControlName="caja">
-        <mat-option *ngFor="let c of tiposCaja" [value]="c">
-          {{c}}
+        <mat-option *ngFor="let c of tiposCaja" [value]="c.id">
+          {{ c.nombre }}
         </mat-option>
       </mat-select>
     </mat-form-field>

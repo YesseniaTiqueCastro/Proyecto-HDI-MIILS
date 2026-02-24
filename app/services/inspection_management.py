@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException
 from app.core.auth import obtener_token
 from app.core.client import HDIClient
 from app.config.settings import HDI_BASE_URL, GESTION_INSPECCION_ENDPOINT
@@ -10,15 +10,15 @@ router = APIRouter(
     tags=["Inspection"]
 )
 
+
 def _gestionar_inspeccion_logica(
     id_inspeccion: str,
-    usuario: str,
-    fecha_hora_inspeccion: str,
-    fecha_hora_salida_inspeccion: str
+    data: dict
 ):
     """
-    Lógica pura HDI: gestiona una inspección
+    Envía gestión completa de inspección a HDI
     """
+
     token = obtener_token()
 
     headers = {
@@ -37,11 +37,11 @@ def _gestionar_inspeccion_logica(
         "solicitud": {
             "operacion": "GESTIONAR",
             "lineaNegocio": "AUTOS",
-            "inspeccion": {
-                "usuarioCreador": usuario,
-                "fechaHoraInspeccion": fecha_hora_inspeccion,
-                "fechaHoraSalidaInspeccion": fecha_hora_salida_inspeccion
-            }
+            "inspeccion": data["inspeccion"],
+            "calificaciones": data.get("calificaciones", []),
+            "accesorios": data.get("accesorios", []),
+            "comentarios": data.get("comentarios", []),
+            "aprobacion": data.get("aprobacion", {})
         }
     }
 
@@ -57,23 +57,22 @@ def _gestionar_inspeccion_logica(
 @router.post("/{id_inspeccion}")
 def gestionar_inspeccion(
     id_inspeccion: str,
-    usuario: str = Query(..., description="Usuario inspector"),
-    fecha_hora_inspeccion: str = Query(..., description="Fecha hora inspección"),
-    fecha_hora_salida_inspeccion: str = Query(..., description="Fecha hora salida")
+    payload: dict
 ):
     """
-    Endpoint FastAPI para gestionar una inspección HDI
+    Gestiona inspección completa HDI
     """
+
     try:
         status, data = _gestionar_inspeccion_logica(
             id_inspeccion=id_inspeccion,
-            usuario=usuario,
-            fecha_hora_inspeccion=fecha_hora_inspeccion,
-            fecha_hora_salida_inspeccion=fecha_hora_salida_inspeccion
+            data=payload
         )
+
         return {
             "status": status,
             "response": data
         }
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
