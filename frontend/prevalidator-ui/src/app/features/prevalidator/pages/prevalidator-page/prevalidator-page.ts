@@ -13,6 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 
 /* SERVICE */
 import { ApiService } from '../../../../core/services/api.service';
+import { buildHdiPayload } from '../../mappers/hdi-payload.mapper';
 
 /* CATALOGOS */
 import {
@@ -47,11 +48,13 @@ export class PrevalidatorPageComponent implements DoCheck {
   placaBusqueda = '';
   idBusqueda = '';
 
+  /** ID  DE INSPECCIÓN */
+  idInspeccion: number | null = null;
+
   bloquearPlaca = false;
   bloquearId = false;
   cargando = false;
 
-  /* ===== CATÁLOGOS ===== */
   servicios = SERVICIOS;
   tiposCaja = TIPOS_CAJA;
   tiposCarroceria = TIPOS_CARROCERIA;
@@ -93,6 +96,7 @@ export class PrevalidatorPageComponent implements DoCheck {
   limpiarBusqueda() {
     this.placaBusqueda = '';
     this.idBusqueda = '';
+    this.idInspeccion = null;
   }
 
   limpiarFormulario() {
@@ -122,6 +126,10 @@ export class PrevalidatorPageComponent implements DoCheck {
 
         console.log('DATA HDI:', data);
 
+        this.idInspeccion = Number(
+          data.inspeccion?.idInspeccion ?? this.idBusqueda
+        );
+
         this.form.patchValue({
           fechaHoraInspeccion: data.inspeccion?.fechaHoraInspeccion,
           fechaHoraSalidaInspeccion: data.inspeccion?.fechaHoraSalidaInspeccion,
@@ -148,4 +156,32 @@ export class PrevalidatorPageComponent implements DoCheck {
       }
     });
   }
+
+  guardar() {
+
+  if (!this.idInspeccion) {
+    alert('Debe consultar una inspección primero');
+    return;
+  }
+
+  const payload = buildHdiPayload(
+    this.form.value,
+    this.idInspeccion
+  );
+
+  console.log('ENVIANDO A HDI', payload);
+
+  this.apiService
+    .guardarPrevalidacion(this.idInspeccion, payload)
+    .subscribe({
+      next: (resp) => {
+        console.log('RESPUESTA HDI', resp);
+        alert('Inspección gestionada correctamente ');
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Error enviando a HDI');
+      }
+    });
+}
 }

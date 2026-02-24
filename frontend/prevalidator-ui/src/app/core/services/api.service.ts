@@ -16,19 +16,31 @@ export class ApiService {
      CONSULTA PREVALIDADOR HDI
   =============================== */
   consultarPrevalidador(
-  placa?: string,
-  idInspeccion?: string
-): Observable<any> {
+    placa?: string,
+    idInspeccion?: string
+  ): Observable<any> {
 
-  const params: any = {};
+    const params: any = {};
 
-  if (placa) params.placa = placa;
-  if (idInspeccion) params.id_inspeccion = idInspeccion;
+    if (placa) params.placa = placa;
+    if (idInspeccion) params.id_inspeccion = idInspeccion;
 
-  return this.http.get(
-    `${this.baseUrl}/consultation/inspection/consultar`,
-    { params }
-  );
-}
+    return this.http.get(
+      `${this.baseUrl}/consultation/inspection/consultar`,
+      { params }
+    );
+  }
 
+  /* ===============================
+     GESTIONAR INSPECCION HDI
+  =============================== */
+  guardarPrevalidacion(
+    idInspeccion: number,
+    payload: any
+  ) {
+    return this.http.post(
+      `${this.baseUrl}/inspection/${idInspeccion}`,
+      payload
+    );
+  }
 }

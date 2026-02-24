@@ -42,6 +42,10 @@
       Limpiar formulario
     </button>
 
+    <button mat-raised-button color="primary" (click)="guardar()" [disabled]="cargando || !idInspeccion">
+       Guardar Prevalidación
+    </button>
+
   </div>
 
   <mat-divider></mat-divider>

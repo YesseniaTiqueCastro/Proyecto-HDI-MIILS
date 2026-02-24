@@ -12,7 +12,6 @@ app = FastAPI(
     version="1.0.0"
 )
 
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -23,9 +22,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-app.include_router(health_router, prefix="/health", tags=["Health"])
-app.include_router(consultation_router, prefix="/consultation", tags=["Consultation"])
-app.include_router(inspection_router, prefix="/inspection", tags=["Inspection"])
-app.include_router(photo_upload_router, prefix="/photos", tags=["Photos"])
-app.include_router(photo_status_router, prefix="/photos", tags=["Photos"])
+app.include_router(health_router, prefix="/health")
+app.include_router(consultation_router, prefix="/consultation")
+app.include_router(inspection_router)  
+app.include_router(photo_upload_router, prefix="/photos")
+app.include_router(photo_status_router, prefix="/photos")
