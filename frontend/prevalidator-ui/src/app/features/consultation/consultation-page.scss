@@ -1,0 +1,21 @@
+.prevalidator-card {
+  margin: 24px;
+  padding: 16px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+}
+
+mat-card-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #6a1b9a;
+}
+
+mat-form-field {
+  width: 100%;
+}

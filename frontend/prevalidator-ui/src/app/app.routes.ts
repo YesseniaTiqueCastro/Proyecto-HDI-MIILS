@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { PrevalidatorPageComponent } from './features/prevalidator/pages/prevalidator-page/prevalidator-page';
+import { ConsultationPageComponent } from './features/consultation/consultation.component';
 
 export const routes: Routes = [
   {
@@ -10,5 +11,9 @@ export const routes: Routes = [
   {
     path: 'prevalidator',
     component: PrevalidatorPageComponent,
+  },
+  {
+    path: 'consulta',
+    component: ConsultationPageComponent,
   },
 ];

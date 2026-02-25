@@ -1,0 +1,141 @@
+<mat-card class="prevalidator-card">
+
+  <mat-card-title>
+    Consulta de Inspección HDI
+  </mat-card-title>
+
+  <mat-divider></mat-divider>
+
+  <!-- ========= BUSQUEDA ========= -->
+
+  <div class="form-grid">
+
+    <mat-form-field appearance="outline">
+      <mat-label>Placa</mat-label>
+      <input matInput [(ngModel)]="placa" [disabled]="bloquearPlaca">
+
+      <button *ngIf="placa"
+        matSuffix
+        mat-icon-button
+        (click)="limpiarBusqueda()">
+        <mat-icon>cleaning_services</mat-icon>
+      </button>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>ID Inspección</mat-label>
+      <input matInput [(ngModel)]="idInspeccion" [disabled]="bloquearId">
+
+      <button *ngIf="idInspeccion"
+        matSuffix
+        mat-icon-button
+        (click)="limpiarBusqueda()">
+        <mat-icon>cleaning_services</mat-icon>
+      </button>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" (click)="consultar()">
+      Consultar
+    </button>
+
+    <button mat-raised-button color="warn" (click)="limpiarFormulario()">
+      Limpiar
+    </button>
+
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <!-- ========= RESULTADO ========= -->
+
+  <div *ngIf="resultado" class="form-grid">
+
+    <!-- DATOS INSPECCION -->
+    <mat-form-field appearance="outline">
+      <mat-label>ID Inspección</mat-label>
+      <input matInput [value]="resultado.inspeccion.idInspeccion" readonly>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Estado</mat-label>
+      <input matInput [value]="resultado.inspeccion.estadoInspeccion" readonly>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Usuario Creador</mat-label>
+      <input matInput [value]="resultado.inspeccion.datosInspeccionAuto.usuarioCreador" readonly>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Clave Agente</mat-label>
+      <input matInput [value]="resultado.inspeccion.datosInspeccionAuto.claveAgente" readonly>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Código Motivo</mat-label>
+      <input matInput [value]="resultado.inspeccion.datosInspeccionAuto.codigoMotivoInspeccion.codigo" readonly>
+    </mat-form-field>
+
+    <!-- CLIENTE -->
+    <mat-form-field appearance="outline">
+      <mat-label>Nombre</mat-label>
+      <input matInput
+        [value]="resultado.inspeccion.datosInspeccionAuto.clienteInspeccion.personaNatural.primerNombre
+        + ' ' +
+        resultado.inspeccion.datosInspeccionAuto.clienteInspeccion.personaNatural.primerApellido"
+        readonly>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Documento</mat-label>
+      <input matInput
+        [value]="resultado.inspeccion.datosInspeccionAuto.clienteInspeccion.numeroDocumento"
+        readonly>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Ciudad</mat-label>
+      <input matInput
+        [value]="resultado.inspeccion.datosInspeccionAuto.clienteInspeccion.direccion[0]?.ciudad.nombre"
+        readonly>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Dirección</mat-label>
+      <input matInput
+        [value]="resultado.inspeccion.datosInspeccionAuto.clienteInspeccion.direccion[0]?.textoDireccion"
+        readonly>
+    </mat-form-field>
+
+    <!-- VEHICULO -->
+    <mat-form-field appearance="outline">
+      <mat-label>Placa</mat-label>
+      <input matInput
+        [value]="resultado.inspeccion.datosInspeccionAuto.vehiculo.placa.placa"
+        readonly>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Tipo Placa</mat-label>
+      <input matInput
+        [value]="resultado.inspeccion.datosInspeccionAuto.vehiculo.placa.tipoPlaca.nombre"
+        readonly>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Modelo</mat-label>
+      <input matInput
+        [value]="resultado.inspeccion.datosInspeccionAuto.vehiculo.modelo"
+        readonly>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Valor</mat-label>
+      <input matInput
+        [value]="resultado.inspeccion.datosInspeccionAuto.vehiculo.valor"
+        readonly>
+    </mat-form-field>
+
+  </div>
+
+</mat-card>
