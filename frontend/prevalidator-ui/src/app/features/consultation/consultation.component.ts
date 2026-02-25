@@ -12,6 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 
 /* SERVICE */
 import { ApiService } from '../../core/services/api.service';
+import {SERVICIOS,TIPOS_VEHICULO,TIPOS_CAJA,TIPOS_CARROCERIA,COLORES,TIPOS_PINTURA} from '../../core/catalogos_hdi';
 
 @Component({
   selector: 'app-consultation-page',
@@ -86,6 +87,8 @@ export class ConsultationPageComponent implements DoCheck {
       next: (data: any) => {
 
   console.log('RESPUESTA CONSULTA HDI', data);
+  console.log('ESTADO INSPECCION',data?.inspeccion?.estadoInspeccion
+);
 
   const inspeccion = data?.inspeccion;
   const datos = inspeccion?.datosInspeccionAuto;
@@ -111,6 +114,35 @@ const mapaTipoPlaca: any = {
   '11': 'Tránsito Libre'
 };
 
+/* ============================
+   MAPAS VEHICULO (CATALOGOS)
+============================ */
+
+const buscarNombre = (catalogo: any[], codigo: any) => {
+  const item = catalogo.find(c => String(c.id) === String(codigo));
+  return item ? item.nombre : '';
+};
+
+if (vehiculo) {
+
+  vehiculo.color =
+    buscarNombre(COLORES, vehiculo?.color?.codigo);
+
+  vehiculo.tipoPintura =
+    buscarNombre(TIPOS_PINTURA, vehiculo?.tipoPintura?.codigo);
+
+  vehiculo.tipoCaja =
+    buscarNombre(TIPOS_CAJA, vehiculo?.tipoCaja?.codigo);
+
+  vehiculo.tipoCarroceria =
+    buscarNombre(TIPOS_CARROCERIA, vehiculo?.tipoCarroceria?.codigo);
+
+  vehiculo.tipoServicio =
+    buscarNombre(SERVICIOS, vehiculo?.tipoServicio?.codigo);
+
+  vehiculo.tipoVehiculo =
+    buscarNombre(TIPOS_VEHICULO, vehiculo?.tipoVehiculo?.codigo);
+}
 /* ============================
 TRANSFORMACIONES VISUALES
 ============================ */
