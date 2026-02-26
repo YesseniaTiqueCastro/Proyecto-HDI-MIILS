@@ -83,10 +83,11 @@ export class ConsultationPageComponent implements DoCheck {
 
   const valor = this.idInspeccion || this.placa;
 
-    if (!valor) {
-      alert('Debe ingresar placa o id inspección');
-      return;
-    }
+     /* ===== VALIDACION CAMPO VACIO ===== */
+if (!valor || valor.trim() === '') {
+  alert('Código de inspección no encontrado en el sistema MIILS. Verifique que el código informado sea correcto.');
+  return;
+}
 
   this.cargando = true;
   this.placa = this.placa?.toUpperCase();
