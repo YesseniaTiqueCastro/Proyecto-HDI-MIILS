@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTableModule } from '@angular/material/table';
 
 /* SERVICE */
 import { ApiService } from '../../core/services/api.service';
@@ -26,7 +27,9 @@ import {SERVICIOS,TIPOS_VEHICULO,TIPOS_CAJA,TIPOS_CARROCERIA,COLORES,TIPOS_PINTU
     MatInputModule,
     MatDividerModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatTableModule
+    
   ],
   templateUrl: './consultation-page.html',
   styleUrls: ['./consultation-page.scss'],
@@ -41,6 +44,14 @@ export class ConsultationPageComponent implements DoCheck {
 
   cargando = false;
   resultado: any = null;
+
+  columnasSiniestros: string[] = [
+    'nombreCompania',
+    'placa',
+    'fecha',
+    'valor',
+    'garantias'
+];
 
   form: FormGroup;
 
@@ -68,26 +79,27 @@ export class ConsultationPageComponent implements DoCheck {
 
   consultar() {
 
-    if (this.cargando) return;
+  if (this.cargando) return;
 
-    const valor = this.idInspeccion || this.placa;
+  const valor = this.idInspeccion || this.placa;
 
     if (!valor) {
       alert('Debe ingresar placa o id inspección');
       return;
     }
 
-    this.cargando = true;
-    this.placa = this.placa?.toUpperCase();
+  this.cargando = true;
+  this.placa = this.placa?.toUpperCase();
     this.apiService.consultarInspeccionHDI(
-      this.placa || undefined,
-      this.idInspeccion || undefined
+    this.placa || undefined,
+    this.idInspeccion || undefined
     )
     .subscribe({
       next: (data: any) => {
 
   console.log('RESPUESTA CONSULTA HDI', data);
   console.log('ESTADO INSPECCION',data?.inspeccion?.estadoInspeccion
+    
 );
 
   const inspeccion = data?.inspeccion;
@@ -192,6 +204,7 @@ if (vehiculo?.placa?.tipoPlaca?.codigo) {
   dir.departamento = valorSeguro(dir.departamento, 'nombre', 'codigo');
   dir.ciudad = valorSeguro(dir.ciudad, 'nombre', 'codigo');
   dir.tipoDireccion = valorSeguro(dir.tipoDireccion, 'nombre', 'codigo');
+
 
   /* ========= RESULTADO FINAL ========= */
 

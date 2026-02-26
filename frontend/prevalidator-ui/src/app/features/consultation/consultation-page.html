@@ -35,7 +35,9 @@
 
   <mat-divider></mat-divider>
 
-  <!-- ========== RESULTADO ========= -->
+  <!-- ========== RESULTADOS ========= -->
+
+  
   <div *ngIf="resultado" class="form-grid">
 
   <!-- ================= INSPECCION ================= -->
@@ -53,6 +55,11 @@
   <mat-form-field appearance="outline">
     <mat-label>Fecha Creación</mat-label>
     <input matInput [value]="resultado?.inspeccion?.datosInspeccionAuto?.fechaCreacion || ''"readonly>
+  </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Fecha Fin Inspección</mat-label>
+      <input matInput [value]="resultado?.inspeccion?.fechaHoraSalidaInspeccion || ''"readonly>
   </mat-form-field>
 
   <mat-form-field appearance="outline">
@@ -214,6 +221,60 @@
   <input matInput [value]="resultado?.inspeccion?.datosInspeccionAuto?.vehiculo?.tipoVehiculo || ''"readonly>
 </mat-form-field>
 
- </div>
+</div>
+
+<!-- ================= SINIESTROS ================= -->
+
+<ng-container
+  *ngIf="resultado?.inspeccion?.datosInspeccionAuto?.vehiculo as vehiculo">
+
+  <!-- ===== CUANDO SI HAY SINIESTROS ===== -->
+  <div class="siniestros-container"
+       *ngIf="vehiculo?.consultaSiniestros?.siniestros?.length > 0">
+
+    <h3>Siniestros encontrados</h3>
+
+    <table mat-table
+      [dataSource]="vehiculo.consultaSiniestros.siniestros"
+      class="siniestros-table">
+
+      <ng-container matColumnDef="nombreCompania">
+        <th mat-header-cell *matHeaderCellDef> Nombre de compañía </th>
+        <td mat-cell *matCellDef="let s"> {{ s.nombreCompania }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="placa">
+        <th mat-header-cell *matHeaderCellDef> Placa </th>
+        <td mat-cell *matCellDef="let s"> {{ s.placa }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="fecha">
+        <th mat-header-cell *matHeaderCellDef> Fecha de siniestro </th>
+        <td mat-cell *matCellDef="let s">
+          {{ s.fechaOcurrenciaSiniestro }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="valor">
+        <th mat-header-cell *matHeaderCellDef> Valor asegurado </th>
+        <td mat-cell *matCellDef="let s">
+          {{ s.valorAsegurado }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="garantias">
+        <th mat-header-cell *matHeaderCellDef> Garantías </th>
+        <td mat-cell *matCellDef="let s">
+          {{ s.garantias?.join(', ') }}
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columnasSiniestros"></tr>
+      <tr mat-row *matRowDef="let row; columns: columnasSiniestros;"></tr>
+
+    </table>
+  </div>
+
+</ng-container>
 
 </mat-card>

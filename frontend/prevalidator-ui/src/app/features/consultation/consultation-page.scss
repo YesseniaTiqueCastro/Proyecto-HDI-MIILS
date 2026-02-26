@@ -19,3 +19,33 @@ mat-card-title {
 mat-form-field {
   width: 100%;
 }
+.siniestros-container {
+  margin-top: 25px;
+}
+
+.siniestros-table {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #9a919f;
+}
+
+.siniestros-table th {
+  background: #c28ce3;
+  font-weight: 600;
+}
+
+.siniestros-table td,
+.siniestros-table th {
+  padding: 12px;
+}
+
+.siniestros-table tr:hover {
+  background: #fafafa;
+}
+.sin-siniestros {
+  text-align: center;
+  margin-top: 16px;
+  font-style: italic;
+  color: #6b7280;
+}

@@ -44,10 +44,12 @@ def _consultar_inspeccion_logica(
                 "ip": "1.1.1.1"
             },
             "solicitud": {
-                "operacion": "CONSULTAR",
-                "lineaNegocio": "AUTOS",
-                "inspeccion": {}
-            }
+               "operacion": "CONSULTAR",
+               "lineaNegocio": "AUTOS",
+               "usuario": "COLSERAUTO",
+               "consultaSiniestros": True,
+               "inspeccion": {}
+}
         }
     }
 
