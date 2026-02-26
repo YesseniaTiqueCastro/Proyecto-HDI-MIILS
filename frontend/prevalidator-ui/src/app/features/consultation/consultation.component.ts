@@ -98,9 +98,6 @@ export class ConsultationPageComponent implements DoCheck {
       next: (data: any) => {
 
   console.log('RESPUESTA CONSULTA HDI', data);
-  console.log('ESTADO INSPECCION',data?.inspeccion?.estadoInspeccion
-    
-);
 
   const inspeccion = data?.inspeccion;
   const datos = inspeccion?.datosInspeccionAuto;

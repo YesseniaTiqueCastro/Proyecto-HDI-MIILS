@@ -86,7 +86,7 @@
   </mat-form-field>
 
   <mat-form-field appearance="outline">
-    <mat-label>Código Persona</mat-label>
+    <mat-label>Número Documento</mat-label>
     <input matInput [value]="resultado?.inspeccion?.datosInspeccionAuto?.clienteInspeccion?.codigoPersona || ''"readonly>
   </mat-form-field>
 
@@ -172,6 +172,11 @@
   <mat-form-field appearance="outline">
     <mat-label>Valor</mat-label>
     <input matInput [value]="resultado?.inspeccion?.datosInspeccionAuto?.vehiculo?.valor || ''"readonly>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Serial</mat-label>
+    <input matInput [value]="resultado?.inspeccion?.datosInspeccionAuto?.vehiculo?.serial || ''"readonly>
   </mat-form-field>
 
   <mat-form-field appearance="outline">
