@@ -80,10 +80,22 @@ export class ConsultationPageComponent implements DoCheck {
   consultar() {
 
   if (this.cargando) return;
+     const valor = this.idInspeccion || this.placa;
 
-  const valor = this.idInspeccion || this.placa;
+  /* ===============================
+VALIDAR CARACTERES ESPECIALES
+=============================== */
 
-     /* ===== VALIDACION CAMPO VACIO ===== */
+const regexPermitido = /^[a-zA-Z0-9]+$/;
+
+if (this.placa && !regexPermitido.test(this.placa)) {
+  alert('Código de inspección no encontrado en el sistema MIILS. Verifique que el código informado sea correcto.');
+  return;
+}
+
+  /* ===============================
+VALIDAR CAMPOS VACIOS
+=============================== */
 if (!valor || valor.trim() === '') {
   alert('Código de inspección no encontrado en el sistema MIILS. Verifique que el código informado sea correcto.');
   return;
