@@ -57,10 +57,13 @@
     <input matInput [value]="resultado?.inspeccion?.datosInspeccionAuto?.fechaCreacion || ''"readonly>
   </mat-form-field>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Fecha Fin Inspección</mat-label>
-      <input matInput [value]="resultado?.inspeccion?.fechaHoraSalidaInspeccion || ''"readonly>
+  <mat-form-field appearance="outline">
+    <mat-label>Fecha Fin Inspección</mat-label>
+    <input matInput [value]="resultado?.inspeccion?.fechaFinInspeccion && resultado?.inspeccion?.fechaFinInspeccion !== 'null'? resultado?.inspeccion?.fechaFinInspeccion: ''"readonly/>
   </mat-form-field>
+
+  
+
 
   <mat-form-field appearance="outline">
     <mat-label>Usuario Creador</mat-label>
