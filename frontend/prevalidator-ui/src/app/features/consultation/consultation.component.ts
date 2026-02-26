@@ -102,10 +102,13 @@ if (!valor || valor.trim() === '') {
 }
 
   this.cargando = true;
-  this.placa = this.placa?.toUpperCase();
-    this.apiService.consultarInspeccionHDI(
-    this.placa || undefined,
-    this.idInspeccion || undefined
+    if (this.placa) {
+      this.placa = this.placa.trim().toUpperCase();
+}
+
+  this.apiService.consultarInspeccionHDI(
+  this.placa || undefined,
+  this.idInspeccion || undefined
     )
     .subscribe({
       next: (data: any) => {
