@@ -7,6 +7,12 @@ ven/
 # Environment
 .env
 
+# Scripts locales proxy
+cloud_sql_proxy.exe
+credentials*.json
+*.key.json
+proxy_connection*
+
 # Editor de código
 .vscode/
 
