@@ -108,13 +108,13 @@ if (!valor || valor.trim() === '') {
 
   this.apiService.consultarInspeccionHDI(
   this.placa || undefined,
-  this.idInspeccion || undefined
-    )
+  this.idInspeccion || undefined)
+    
     .subscribe({
       next: (data: any) => {
 
   console.log('RESPUESTA CONSULTA HDI', data);
-
+  const placaConsulta = this.placa?.toUpperCase();
   const inspeccion = data?.inspeccion;
   const datos = inspeccion?.datosInspeccionAuto;
   const cliente = datos?.clienteInspeccion;
@@ -218,16 +218,15 @@ if (vehiculo?.placa?.tipoPlaca?.codigo) {
   dir.ciudad = valorSeguro(dir.ciudad, 'nombre', 'codigo');
   dir.tipoDireccion = valorSeguro(dir.tipoDireccion, 'nombre', 'codigo');
 
-
-  /* ========= RESULTADO FINAL ========= */
-
   this.resultado = data;
   this.cargando = false;
 },
-      error: () => {
-        alert('No se encontraron datos');
-        this.cargando = false;
-      }
+     error: () => {
+
+  /* Mensaje por defecto */
+  alert('No se encontraron datos');
+  this.cargando = false;
+}
     });
   }
 }
