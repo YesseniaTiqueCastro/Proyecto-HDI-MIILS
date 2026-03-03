@@ -1,181 +1,89 @@
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from datetime import datetime
-import uuid
 import traceback
 
-from app.core.auth import obtener_token
-from app.core.client import HDIClient
-from app.config.settings import HDI_BASE_URL, GESTION_INSPECCION_ENDPOINT
 from app.db.dependencies import get_db
 from app.repositories.api_hdi_repository import ApiHDIRepository
+from app.repositories.calificaciones_repository import CalificacionesRepository
+from app.repositories.accesorios_repository import AccesoriosRepository
 
 router = APIRouter(
     prefix="/inspection",
-    tags=["Inspection"]
+    tags=["Inspection Management"]
 )
 
 
-def to_iso(value):
-    """
-    Convierte datetime a string ISO requerido por HDI
-    """
-    if not value:
-        return None
-    if isinstance(value, datetime):
-        return value.isoformat() + "Z"
-    return value
+# ==========================================================
+# ENDPOINT GESTIÓN CONSUME VISTAS HALCÓN
+# ==========================================================
 
-
-def _gestionar_inspeccion_logica(
-    id_inspeccion: str,
-    data: dict,
-    db: Session
-):
-
-    token = obtener_token()
-
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Content-Type": "application/json"
-    }
-
-    # ===============================
-    # TRAER DATA DESDE BD
-    # ===============================
-    api_hdi = ApiHDIRepository.get_by_inspeccion(
-        db=db,
-        id_service=id_inspeccion
-) 
-
-    if not api_hdi:
-
-    # ===============================
-    # DICCIONARIO DE INSPECCIÓN
-    # ===============================
-     inspeccion = {
-    "usuarioCreador": "COLSERAUTO",
-
-    "fechaHoraInspeccion":
-        data.get("inspeccion", {}).get("fechaHoraInspeccion")
-        or to_iso(api_hdi.get("initial_time")),
-
-    "fechaHoraSalidaInspeccion":
-        data.get("inspeccion", {}).get("fechaHoraSalidaInspeccion")
-        or to_iso(api_hdi.get("final_time")),
-
-    "servicio":
-        data.get("inspeccion", {}).get("servicio")
-        or api_hdi.get("servicio"),
-
-    "chasis":
-        data.get("inspeccion", {}).get("chasis")
-        or api_hdi.get("numero_chasis"),
-
-    "serial":
-        data.get("inspeccion", {}).get("serial")
-        or api_hdi.get("numero_serie"),
-
-    "motor":
-        data.get("inspeccion", {}).get("motor")
-        or api_hdi.get("numero_motor"),
-
-    "modelo":
-        int(data.get("inspeccion", {}).get("modelo"))
-        if data.get("inspeccion", {}).get("modelo")
-        else int(api_hdi.get("modelo")) if api_hdi.get("modelo") else None,
-
-    "color":
-        data.get("inspeccion", {}).get("color")
-        or api_hdi.get("color_id_hdi"),
-
-    "tipoCarroceria":
-        data.get("inspeccion", {}).get("tipoCarroceria")
-        or api_hdi.get("carroceria_id_hdi"),
-
-    "tipoVehiculo":
-        data.get("inspeccion", {}).get("tipoVehiculo")
-        or api_hdi.get("service_type"),
-
-    "kilometraje":
-        data.get("inspeccion", {}).get("kilometraje")
-        or api_hdi.get("kilometraje"),
-
-    "caja":
-        data.get("inspeccion", {}).get("caja")
-        or api_hdi.get("id_caja_hdi"),
-
-    # SOLO AUDITORÍA
-    "tipo": api_hdi.get("tipo"),
-    "codigoFasecolda": api_hdi.get("codigo_fasecolda")
-}
-
-    body = {
-        "infoRequest": {
-            "requestID": str(uuid.uuid4()),
-            "fecha": datetime.utcnow().isoformat() + "Z",
-            "aplicacionCliente": "12",
-            "terminal": "Colserauto",
-            "ip": "1.1.1.1"
-        },
-        "solicitud": {
-            "operacion": "GESTIONAR",
-            "lineaNegocio": "AUTOS",
-            "inspeccion": inspeccion,
-            "calificaciones": [],
-            "accesorios": [],
-            "comentarios": [],
-            "aprobacion": {
-                "identificacion": {
-                    "tipoDocumento": "CC",
-                    "numeroDocumento": "12345678",
-                    "aprobado": True
-                },
-                "operario": {
-                    "usuario": "COLSERAUTO",
-                    "aprobado": True
-                }
-            }
-        }
-    }
-
-    print("===== BODY ENVIADO A HDI =====")
-    print(body)
-
-    response = HDIClient.post(
-        url=f"{HDI_BASE_URL}{GESTION_INSPECCION_ENDPOINT}/{id_inspeccion}",
-        headers=headers,
-        json=body
-    )
-
-    print("HDI STATUS:", response.status_code)
-    print("HDI RESPONSE:", response.text)
-
-    try:
-        response_json = response.json()
-    except Exception:
-        response_json = {"raw": response.text}
-
-    return response.status_code, response_json
-
-
-@router.post("/{id_inspeccion}")
+@router.get("/{id_inspeccion}")
 def gestionar_inspeccion(
     id_inspeccion: str,
-    payload: dict,
     db: Session = Depends(get_db)
 ):
     try:
-        status, data = _gestionar_inspeccion_logica(
-            id_inspeccion=id_inspeccion,
-            data=payload,
-            db=db
+
+        # ==========================================
+        #  CONSULTAR VISTA api_hdi (GCP)
+        # ==========================================
+        api_hdi = ApiHDIRepository.get_by_inspeccion(
+            db=db,
+            id_service=id_inspeccion
         )
 
-        return {
-            "status": status,
-            "response": data
+        if not api_hdi:
+            raise HTTPException(
+                status_code=404,
+                detail="Inspección no encontrada en base de datos"
+            )
+
+        # ==========================================
+        #  CONSULTAR VISTA api_calificaciones
+        # ==========================================
+        calificaciones = CalificacionesRepository.get_by_inspeccion(
+            db=db,
+            id_service=id_inspeccion
+        )
+
+        # ==========================================
+        # CONSULTAR VISTA api_accesorios
+        # ==========================================
+        accesorios = AccesoriosRepository.get_by_inspeccion(
+            db=db,
+            id_service=id_inspeccion
+        )
+
+        # ==========================================
+        # RESPUESTA COMPLETA PARA EL FRONT
+        # ==========================================
+
+        response = {
+            "inspeccion": {
+                "fechaHoraInspeccion": api_hdi.get("initial_time"),
+                "fechaHoraSalidaInspeccion": api_hdi.get("final_time"),
+                "servicio": api_hdi.get("servicio"),
+                "chasis": api_hdi.get("numero_chasis"),
+                "serial": api_hdi.get("numero_serie"),
+                "motor": api_hdi.get("numero_motor"),
+                "modelo": api_hdi.get("modelo"),
+                "color": api_hdi.get("color_id_hdi"),
+                "tipoCarroceria": api_hdi.get("carroceria_id_hdi"),
+                "tipoVehiculo": api_hdi.get("service_type"),
+                "kilometraje": api_hdi.get("kilometraje"),
+                "caja": api_hdi.get("id_caja_hdi"),
+                "tipo": api_hdi.get("tipo"),
+                "codigoFasecolda": api_hdi.get("codigo_fasecolda")
+            },
+            "calificaciones": calificaciones or [],
+            "accesorios": accesorios or []
         }
+
+        return response
+
+    except HTTPException:
+        raise
 
     except Exception as e:
         print("ERROR REAL BACKEND:")
