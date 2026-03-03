@@ -1,6 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormsModule,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
+
+import { finalize } from 'rxjs/operators';
 
 /* MATERIAL */
 import { MatCardModule } from '@angular/material/card';
@@ -10,6 +18,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 
 /* SERVICE */
 import { ApiService } from '../../../../core/services/api.service';
@@ -38,18 +49,18 @@ import {
     MatSelectModule,
     MatDividerModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatTableModule,
+    MatPaginatorModule
   ],
   templateUrl: './prevalidator-page.html',
   styleUrls: ['./prevalidator-page.scss'],
 })
 export class PrevalidatorPageComponent {
 
-  /** BÚSQUEDA SOLO POR ID INSPECCIÓN */
-  idBusqueda = '';
+  idBusqueda: string = '';
   idInspeccion: number | null = null;
-
-  cargando = false;
+  cargando: boolean = false;
 
   servicios = SERVICIOS;
   tiposCaja = TIPOS_CAJA;
@@ -59,6 +70,39 @@ export class PrevalidatorPageComponent {
   tiposPintura = TIPOS_PINTURA;
 
   form: FormGroup;
+
+  /* ================= CALIFICACIONES ================= */
+
+  displayedColumnsCalificaciones: string[] = [
+    'id_service',
+    'area',
+    'parte',
+    'criterio'
+  ];
+
+  dataSourceCalificaciones = new MatTableDataSource<any>([]);
+
+  @ViewChild('paginatorCalificaciones')
+  paginatorCalificaciones!: MatPaginator;
+
+  /* ================= ACCESORIOS ================= */
+
+  displayedColumnsAccesorios: string[] = [
+    'id_service',
+    'valor',
+    'nombre',
+    'existencia',
+    'id_accesorio',
+    'asegurable',
+    'original',
+    'cantidad',
+    'id_hdi'
+  ];
+
+  dataSourceAccesorios = new MatTableDataSource<any>([]);
+
+  @ViewChild('paginatorAccesorios')
+  paginatorAccesorios!: MatPaginator;
 
   constructor(
     private fb: FormBuilder,
@@ -70,17 +114,17 @@ export class PrevalidatorPageComponent {
       fechaHoraSalidaInspeccion: [''],
       tipo: [''],
       codigoFasecolda: [''],
-      servicio: [''],
+      servicio: ['', Validators.required],
       chasis: [''],
-      serial: [''], 
+      serial: [''],
       motor: [''],
       modelo: [''],
-      color: [''],
-      tipoPintura: [''],
-      tipoCarroceria: [''],
-      tipoVehiculo: [''],
+      color: ['', Validators.required],
+      tipoPintura: ['', Validators.required],
+      tipoCarroceria: ['', Validators.required],
+      tipoVehiculo: ['', Validators.required],
       kilometraje: [''],
-      caja: [''],
+      caja: ['', Validators.required],
     });
   }
 
@@ -92,55 +136,71 @@ export class PrevalidatorPageComponent {
   limpiarFormulario() {
     this.form.reset();
     this.limpiarBusqueda();
+    this.dataSourceCalificaciones.data = [];
+    this.dataSourceAccesorios.data = [];
   }
 
   consultar() {
 
     if (this.cargando) return;
 
-    if (!this.idBusqueda) {
+    const id = this.idBusqueda?.trim();
+
+    if (!id) {
       alert('Debe ingresar id inspección');
       return;
     }
 
     this.cargando = true;
 
-    this.apiService.consultarPrevalidador(
-      undefined,
-      this.idBusqueda
-    )
-    .subscribe({
-      next: (data: any) => {
+    this.apiService.consultarPrevalidador(id)
+      .pipe(finalize(() => this.cargando = false))
+      .subscribe({
+        next: (data: any) => {
 
-        console.log('DATA PREVALIDADOR:', data);
+          console.log('DATA PREVALIDADOR:', data);
 
-        this.idInspeccion = Number(this.idBusqueda);
+          this.idInspeccion = Number(id);
 
-        this.form.patchValue({
-          fechaHoraInspeccion: data.inspeccion?.fechaHoraInspeccion,
-          fechaHoraSalidaInspeccion: data.inspeccion?.fechaHoraSalidaInspeccion,
-          tipo: data.vehiculo?.tipo,
-          codigoFasecolda: data.vehiculo?.codigoFasecolda,
-          servicio: data.vehiculo?.servicio,
-          chasis: data.vehiculo?.chasis,
-          serial: data.vehiculo?.serial,
-          motor: data.vehiculo?.motor,
-          modelo: data.vehiculo?.modelo,
-          color: data.vehiculo?.color,
-          tipoPintura: data.vehiculo?.tipoPintura,
-          tipoCarroceria: data.vehiculo?.tipoCarroceria,
-          tipoVehiculo: data.vehiculo?.tipoVehiculo,
-          kilometraje: data.vehiculo?.kilometraje,
-          caja: data.vehiculo?.caja,
-        });
+          /* ===== FORM ===== */
+          this.form.patchValue({
+            fechaHoraInspeccion: data.inspeccion?.fechaHoraInspeccion,
+            fechaHoraSalidaInspeccion: data.inspeccion?.fechaHoraSalidaInspeccion,
+            tipo: data.vehiculo?.tipo,
+            codigoFasecolda: data.vehiculo?.codigoFasecolda,
+            servicio: data.vehiculo?.servicio,
+            chasis: data.vehiculo?.chasis,
+            serial: data.vehiculo?.serial,
+            motor: data.vehiculo?.motor,
+            modelo: data.vehiculo?.modelo,
+            color: data.vehiculo?.color,
+            tipoPintura: data.vehiculo?.tipoPintura,
+            tipoCarroceria: data.vehiculo?.tipoCarroceria,
+            tipoVehiculo: data.vehiculo?.tipoVehiculo,
+            kilometraje: data.vehiculo?.kilometraje,
+            caja: data.vehiculo?.caja,
+          });
 
-        this.cargando = false;
-      },
-      error: () => {
-        alert('No se encontraron datos');
-        this.cargando = false;
-      }
-    });
+          /* ===== CALIFICACIONES ===== */
+          if (data.calificaciones) {
+            this.dataSourceCalificaciones.data = data.calificaciones;
+            setTimeout(() => {
+              this.dataSourceCalificaciones.paginator = this.paginatorCalificaciones;
+            });
+          }
+
+          /* ===== ACCESORIOS ===== */
+          if (data.accesorios) {
+            this.dataSourceAccesorios.data = data.accesorios;
+            setTimeout(() => {
+              this.dataSourceAccesorios.paginator = this.paginatorAccesorios;
+            });
+          }
+        },
+        error: () => {
+          alert('No se encontraron datos');
+        }
+      });
   }
 
   guardar() {
@@ -150,22 +210,23 @@ export class PrevalidatorPageComponent {
       return;
     }
 
+    if (this.form.invalid) {
+      alert('Debe completar los campos obligatorios');
+      return;
+    }
+
     const payload = buildHdiPayload(
       this.form.value,
       this.idInspeccion
     );
 
-    console.log('ENVIANDO A HDI', payload);
-
     this.apiService
       .guardarPrevalidacion(this.idInspeccion, payload)
       .subscribe({
-        next: (resp) => {
-          console.log('RESPUESTA HDI', resp);
+        next: () => {
           alert('Inspección gestionada correctamente');
         },
-        error: (err) => {
-          console.error(err);
+        error: () => {
           alert('Error enviando a HDI');
         }
       });

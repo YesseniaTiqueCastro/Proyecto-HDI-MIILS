@@ -1,21 +1,96 @@
 .prevalidator-card {
   margin: 24px;
-  padding: 16px;
+  padding: 24px;
 }
 
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+mat-card-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #6a1b9a;
+  margin-bottom: 12px;
+}
+
+.busqueda-container {
+  display: flex;
+  flex-direction: column;
   gap: 16px;
   margin-top: 16px;
 }
 
-mat-card-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #6a1b9a; 
+.busqueda-input {
+  width: 100%;
+}
+
+.busqueda-botones {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.busqueda-botones button {
+  min-width: 150px;
+}
+
+/* ===== PREVALIDADOR ===== */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 20px;
 }
 
 mat-form-field {
   width: 100%;
+}
+
+
+.calificaciones-container {
+  margin-top: 30px;
+}
+
+.calificaciones-table {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #9a919f;
+}
+
+.calificaciones-table th {
+  background: #c28ce3;
+  font-weight: 600;
+}
+
+.calificaciones-table td,
+.calificaciones-table th {
+  padding: 12px;
+}
+
+.calificaciones-table tr:hover {
+  background: #fafafa;
+}
+
+
+.accesorios-container {
+  margin-top: 30px;
+}
+
+.accesorios-table {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #9a919f;
+}
+
+.accesorios-table th {
+  background: #c28ce3;
+  font-weight: 600;
+}
+
+.accesorios-table td,
+.accesorios-table th {
+  padding: 12px;
+}
+
+.accesorios-table tr:hover {
+  background: #fafafa;
 }
