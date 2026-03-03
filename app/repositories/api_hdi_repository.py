@@ -1,13 +1,12 @@
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-
 class ApiHDIRepository:
 
     @staticmethod
     def get_by_inspeccion(
         db: Session,
-        id_service: str | None = None
+        id_service: str
     ):
         query = """
         SELECT
@@ -21,7 +20,6 @@ class ApiHDIRepository:
             numero_chasis,
             numero_motor,
             numero_serie,
-            color_front,
             color_id_hdi,
             carroceria_id_hdi,
             kilometraje,
@@ -37,4 +35,7 @@ class ApiHDIRepository:
             .first()
         )
 
-        return result
+        if not result:
+            return None
+
+        return dict(result)

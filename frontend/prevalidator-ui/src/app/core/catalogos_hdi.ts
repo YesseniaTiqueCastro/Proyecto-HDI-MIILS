@@ -28,7 +28,7 @@ export const TIPOS_CARROCERIA = [
   { id: 3, nombre: 'Motocarro' },
   { id: 4, nombre: 'Sedán' },
   { id: 5, nombre: 'Pickup' },
-  { id: 5, nombre: 'Coupé' },
+  { id: 6, nombre: 'Coupé' },
   { id: 7, nombre: 'Hatchback' },
   { id: 8, nombre: 'Station Wagon' },
   { id: 9, nombre: 'Bus' },
