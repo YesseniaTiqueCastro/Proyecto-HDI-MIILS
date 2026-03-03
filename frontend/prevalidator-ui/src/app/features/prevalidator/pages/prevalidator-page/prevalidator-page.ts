@@ -1,12 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  FormsModule,
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators
-} from '@angular/forms';
+import {FormsModule,FormBuilder,FormGroup,ReactiveFormsModule,Validators} from '@angular/forms';
 
 import { finalize } from 'rxjs/operators';
 
@@ -152,7 +146,6 @@ export class PrevalidatorPageComponent {
     }
 
     this.cargando = true;
-
     this.apiService.consultarPrevalidador(id)
       .pipe(finalize(() => this.cargando = false))
       .subscribe({
@@ -162,40 +155,37 @@ export class PrevalidatorPageComponent {
 
           this.idInspeccion = Number(id);
 
-          /* ===== FORM ===== */
+          /* ===== INSPECCIÓN ===== */
           this.form.patchValue({
             fechaHoraInspeccion: data.inspeccion?.fechaHoraInspeccion,
             fechaHoraSalidaInspeccion: data.inspeccion?.fechaHoraSalidaInspeccion,
-            tipo: data.vehiculo?.tipo,
-            codigoFasecolda: data.vehiculo?.codigoFasecolda,
-            servicio: data.vehiculo?.servicio,
-            chasis: data.vehiculo?.chasis,
-            serial: data.vehiculo?.serial,
-            motor: data.vehiculo?.motor,
-            modelo: data.vehiculo?.modelo,
-            color: data.vehiculo?.color,
-            tipoPintura: data.vehiculo?.tipoPintura,
-            tipoCarroceria: data.vehiculo?.tipoCarroceria,
-            tipoVehiculo: data.vehiculo?.tipoVehiculo,
-            kilometraje: data.vehiculo?.kilometraje,
-            caja: data.vehiculo?.caja,
+            tipo: data.inspeccion?.tipo,
+            codigoFasecolda: data.inspeccion?.codigoFasecolda,
+            servicio: data.inspeccion?.servicio,
+            chasis: data.inspeccion?.chasis,
+            serial: data.inspeccion?.serial,
+            motor: data.inspeccion?.motor,
+            modelo: data.inspeccion?.modelo,
+            color: data.inspeccion?.color,
+            tipoPintura: data.inspeccion?.tipoPintura,
+            tipoCarroceria: data.inspeccion?.tipoCarroceria,
+            tipoVehiculo: data.inspeccion?.tipoVehiculo,
+            kilometraje: data.inspeccion?.kilometraje,
+            caja: data.inspeccion?.caja,
           });
 
           /* ===== CALIFICACIONES ===== */
-          if (data.calificaciones) {
-            this.dataSourceCalificaciones.data = data.calificaciones;
-            setTimeout(() => {
-              this.dataSourceCalificaciones.paginator = this.paginatorCalificaciones;
-            });
-          }
+          this.dataSourceCalificaciones.data = data.calificaciones || [];
+          setTimeout(() => {
+            this.dataSourceCalificaciones.paginator = this.paginatorCalificaciones;
+          });
 
           /* ===== ACCESORIOS ===== */
-          if (data.accesorios) {
-            this.dataSourceAccesorios.data = data.accesorios;
-            setTimeout(() => {
-              this.dataSourceAccesorios.paginator = this.paginatorAccesorios;
-            });
-          }
+          this.dataSourceAccesorios.data = data.accesorios || [];
+          setTimeout(() => {
+            this.dataSourceAccesorios.paginator = this.paginatorAccesorios;
+          });
+
         },
         error: () => {
           alert('No se encontraron datos');
