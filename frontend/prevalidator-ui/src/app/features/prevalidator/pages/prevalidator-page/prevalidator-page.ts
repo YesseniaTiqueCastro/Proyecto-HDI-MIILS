@@ -142,10 +142,10 @@ export class PrevalidatorPageComponent implements DoCheck {
           modelo: data.vehiculo?.modelo,
           color: data.vehiculo?.color,
           tipoPintura: data.vehiculo?.tipoPintura,
-          tipoCarroceria: data.vehiculo?.carroceria,
+          tipoCarroceria: data.vehiculo?.tipoCarroceria,
           tipoVehiculo: data.vehiculo?.tipoVehiculo,
           kilometraje: data.vehiculo?.kilometraje,
-          caja: data.vehiculo?.tipoCaja,
+          caja: data.vehiculo?.caja,
         });
 
         this.cargando = false;
