@@ -46,64 +46,66 @@ def _gestionar_inspeccion_logica(
     api_hdi = ApiHDIRepository.get_by_inspeccion(
         db=db,
         id_service=id_inspeccion
-    )
+) 
 
     if not api_hdi:
-        return 404, {
-            "detalle": f"No existe información HDI para {id_inspeccion}"
-        }
 
     # ===============================
-    # VEHICULO VIENE DEL FRONT
+    # DICCIONARIO DE INSPECCIÓN
     # ===============================
-    vehiculo_front = data.get("inspeccion", {}).get("vehiculo", {})
-
-    # ===============================
-    # MAPEO CORRECTO CAMPOS BD A HDI
-    # (SE USA .get PARA EVITAR ERRORES
-    #  DE COLUMNAS FALTANTES)
-    # ===============================
-    inspeccion = {
+     inspeccion = {
     "usuarioCreador": "COLSERAUTO",
 
-    # EDITABLES
-    "fechaHoraInspeccion": data.get("inspeccion", {}).get("fechaHoraInspeccion")
+    "fechaHoraInspeccion":
+        data.get("inspeccion", {}).get("fechaHoraInspeccion")
         or to_iso(api_hdi.get("initial_time")),
 
-    "fechaHoraSalidaInspeccion": data.get("inspeccion", {}).get("fechaHoraSalidaInspeccion")
+    "fechaHoraSalidaInspeccion":
+        data.get("inspeccion", {}).get("fechaHoraSalidaInspeccion")
         or to_iso(api_hdi.get("final_time")),
 
-    "servicio": data.get("inspeccion", {}).get("servicio")
+    "servicio":
+        data.get("inspeccion", {}).get("servicio")
         or api_hdi.get("servicio"),
 
-    "chasis": data.get("inspeccion", {}).get("chasis")
+    "chasis":
+        data.get("inspeccion", {}).get("chasis")
         or api_hdi.get("numero_chasis"),
 
-    "serial": data.get("inspeccion", {}).get("serial")
+    "serial":
+        data.get("inspeccion", {}).get("serial")
         or api_hdi.get("numero_serie"),
 
-    "motor": data.get("inspeccion", {}).get("motor")
+    "motor":
+        data.get("inspeccion", {}).get("motor")
         or api_hdi.get("numero_motor"),
 
-    "modelo": int(data.get("inspeccion", {}).get("modelo"))
+    "modelo":
+        int(data.get("inspeccion", {}).get("modelo"))
         if data.get("inspeccion", {}).get("modelo")
         else int(api_hdi.get("modelo")) if api_hdi.get("modelo") else None,
 
-    "color": data.get("inspeccion", {}).get("color")
+    "color":
+        data.get("inspeccion", {}).get("color")
         or api_hdi.get("color_id_hdi"),
 
-    "tipoCarroceria": data.get("inspeccion", {}).get("tipoCarroceria")
+    "tipoCarroceria":
+        data.get("inspeccion", {}).get("tipoCarroceria")
         or api_hdi.get("carroceria_id_hdi"),
 
-    "tipoVehiculo": api_hdi.get("service_type"),
+    "tipoVehiculo":
+        data.get("inspeccion", {}).get("tipoVehiculo")
+        or api_hdi.get("service_type"),
 
-    "kilometraje": data.get("inspeccion", {}).get("kilometraje")
+    "kilometraje":
+        data.get("inspeccion", {}).get("kilometraje")
         or api_hdi.get("kilometraje"),
 
-    "caja": data.get("inspeccion", {}).get("caja")
+    "caja":
+        data.get("inspeccion", {}).get("caja")
         or api_hdi.get("id_caja_hdi"),
 
-    # CAMPOS NO EDITABLES POR AUDITORÍA
+    # SOLO AUDITORÍA
     "tipo": api_hdi.get("tipo"),
     "codigoFasecolda": api_hdi.get("codigo_fasecolda")
 }

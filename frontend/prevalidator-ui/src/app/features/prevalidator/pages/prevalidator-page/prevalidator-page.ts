@@ -1,4 +1,4 @@
-import { Component, DoCheck } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
@@ -43,16 +43,12 @@ import {
   templateUrl: './prevalidator-page.html',
   styleUrls: ['./prevalidator-page.scss'],
 })
-export class PrevalidatorPageComponent implements DoCheck {
+export class PrevalidatorPageComponent {
 
-  placaBusqueda = '';
+  /** BÚSQUEDA SOLO POR ID INSPECCIÓN */
   idBusqueda = '';
-
-  /** ID  DE INSPECCIÓN */
   idInspeccion: number | null = null;
 
-  bloquearPlaca = false;
-  bloquearId = false;
   cargando = false;
 
   servicios = SERVICIOS;
@@ -76,7 +72,7 @@ export class PrevalidatorPageComponent implements DoCheck {
       codigoFasecolda: [''],
       servicio: [''],
       chasis: [''],
-      serial: [''],
+      serial: [''], 
       motor: [''],
       modelo: [''],
       color: [''],
@@ -88,13 +84,7 @@ export class PrevalidatorPageComponent implements DoCheck {
     });
   }
 
-  ngDoCheck() {
-    this.bloquearPlaca = !!this.idBusqueda;
-    this.bloquearId = !!this.placaBusqueda;
-  }
-
   limpiarBusqueda() {
-    this.placaBusqueda = '';
     this.idBusqueda = '';
     this.idInspeccion = null;
   }
@@ -108,27 +98,23 @@ export class PrevalidatorPageComponent implements DoCheck {
 
     if (this.cargando) return;
 
-    const valor = this.idBusqueda || this.placaBusqueda;
-
-    if (!valor) {
-      alert('Debe ingresar placa o id inspección');
+    if (!this.idBusqueda) {
+      alert('Debe ingresar id inspección');
       return;
     }
 
     this.cargando = true;
 
     this.apiService.consultarPrevalidador(
-      this.placaBusqueda || undefined,
-      this.idBusqueda || undefined
+      undefined,
+      this.idBusqueda
     )
     .subscribe({
       next: (data: any) => {
 
-        console.log('DATA HDI:', data);
+        console.log('DATA PREVALIDADOR:', data);
 
-        this.idInspeccion = Number(
-          data.inspeccion?.idInspeccion ?? this.idBusqueda
-        );
+        this.idInspeccion = Number(this.idBusqueda);
 
         this.form.patchValue({
           fechaHoraInspeccion: data.inspeccion?.fechaHoraInspeccion,
@@ -159,29 +145,29 @@ export class PrevalidatorPageComponent implements DoCheck {
 
   guardar() {
 
-  if (!this.idInspeccion) {
-    alert('Debe consultar una inspección primero');
-    return;
+    if (!this.idInspeccion) {
+      alert('Debe consultar una inspección primero');
+      return;
+    }
+
+    const payload = buildHdiPayload(
+      this.form.value,
+      this.idInspeccion
+    );
+
+    console.log('ENVIANDO A HDI', payload);
+
+    this.apiService
+      .guardarPrevalidacion(this.idInspeccion, payload)
+      .subscribe({
+        next: (resp) => {
+          console.log('RESPUESTA HDI', resp);
+          alert('Inspección gestionada correctamente');
+        },
+        error: (err) => {
+          console.error(err);
+          alert('Error enviando a HDI');
+        }
+      });
   }
-
-  const payload = buildHdiPayload(
-    this.form.value,
-    this.idInspeccion
-  );
-
-  console.log('ENVIANDO A HDI', payload);
-
-  this.apiService
-    .guardarPrevalidacion(this.idInspeccion, payload)
-    .subscribe({
-      next: (resp) => {
-        console.log('RESPUESTA HDI', resp);
-        alert('Inspección gestionada correctamente ');
-      },
-      error: (err) => {
-        console.error(err);
-        alert('Error enviando a HDI');
-      }
-    });
-}
 }
